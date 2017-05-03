@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.42857143;
+    color: #333;
+}
+.container {
+    max-width: 970px;
+}
