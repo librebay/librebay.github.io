@@ -48,6 +48,10 @@ char *get_file_name_html(const char *fname_md);
 
 void generate_html_file(const char *fname_md, const char *fname_html, const int order);
 
+char *read_line_from_file(char *buf, FILE *stream);
+
+char *get_title(const char *fname_md);
+
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL, "ru_RU.utf8");
@@ -63,16 +67,10 @@ int main(int argc, char **argv)
 
     // Вывод результата на консоль
     if (pn == NULL) {
-        printf("Ошибка определения пути\n");
-    }
-    else {
-        printf("Текущая директория: %s\n", path_current);
+        fprintf(stderr, "Ошибка определения пути\n");
     }
 
     char *out = get_git_path(path_current);
-
-    printf("dirname=%s\n", out);
-
     parse_dir(out, 0);
 
     return 0;
@@ -106,7 +104,7 @@ char *get_git_path(const char *path)
 void parse_dir(const char *path, const int order)
 {
 
-    g_print("\nКаталог = %s, order = %d\n\n", path, order);
+    //g_print("\nКаталог = %s, order = %d\n\n", path, order);
 
     DIR *dir;
     struct dirent *entry;
@@ -180,14 +178,14 @@ char *get_file_name_html(const char *fname_md)
 
 void process_file_md(const char *fname_md, const time_t mtime, const int order)
 {
-    g_print("md Файл = %s\n", fname_md);
-    g_print("Дата и время изменения файла = %ld\n", mtime);
+    //g_print("md Файл = %s\n", fname_md);
+    //g_print("Дата и время изменения файла = %ld\n", mtime);
 
     gboolean i_create_html = FALSE;
 
     char *fname_html = get_file_name_html(fname_md);
 
-    g_print("html Файл = %s\n", fname_html);
+    //g_print("html Файл = %s\n", fname_html);
 
     if (g_file_test(fname_html, G_FILE_TEST_IS_REGULAR)) {
         struct stat st;
@@ -210,11 +208,8 @@ void process_file_md(const char *fname_md, const time_t mtime, const int order)
     }
 
     if (i_create_html) {
-        printf("Генерировать файл!\n");
+        printf("Создаётся файл: %s\n", fname_html);
         generate_html_file(fname_md, fname_html, order);
-    }
-    else {
-        printf("Ничего не делаем!\n");
     }
 
     free(fname_html);
@@ -234,6 +229,12 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
         return;
     }
 
+    char *title = NULL;
+    title = get_title(fname_md);
+    if (title == NULL) {
+        return;
+    }
+
     int len = order * 3 + 1;
     char *lpath = calloc(len, sizeof(char));
     for (int i = 0; i < order; i++) {
@@ -248,7 +249,7 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
     fprintf(file_html, "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n");
     fprintf(file_html, "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n");
 
-    fprintf(file_html, "    <title>!!!No name!!!</title>\n\n");
+    fprintf(file_html, "    <title>%s</title>\n\n", title);
 
     fprintf(file_html, "    <link href=\"%scss/bootstrap.css\" rel=\"stylesheet\">\n", lpath);
     fprintf(file_html, "    <link href=\"%scss/librebay.css\" rel=\"stylesheet\">\n\n", lpath);
@@ -283,4 +284,89 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
     fclose(file_html);
 
     free(lpath);
+}
+
+char *read_line_from_file(char *buf, FILE *stream)
+{
+
+    unsigned int N = 256, delta = 256, i = 0;
+    buf = (char *)malloc(sizeof(char) * N);
+    buf[i] = getc(stream);
+    while (buf[i] != EOF && buf[i] != '\n') {
+        ++i;
+        if (i >= N) {
+            N += delta;
+            buf = (char *)realloc(buf, sizeof(char) * N);
+        }
+        buf[i] = getc(stream);
+    }
+    buf[i] = '\0';
+    return buf;
+}
+
+char *get_title(const char *fname_md)
+{
+    FILE *file;
+    file = fopen(fname_md, "r");
+
+    if (file == NULL) {
+        fprintf(stderr, "fopen() error for %s\n", fname_md);
+        return NULL;
+    }
+
+    char *line;
+    char *line_orig;
+    char *title;
+
+    while (!feof(file)) {
+        line_orig = line = read_line_from_file(line, file);
+
+        if (strlen(line) < 3)
+            continue;
+
+        if (line[0] == '#' && (line[1] == ' ' || line[1] == '\t')) {
+            line[0] = ' ';
+            line = g_strchomp(line);
+            int len = strlen(line);
+            if (line[len - 1] == '#') {
+                line[len - 1] = ' ';
+            }
+
+            int i;
+            int i_cut = 0;
+            for (i = 0; i < len; i++) {
+                if (line[i] == '[') {
+                    i_cut = 1;
+                }
+                if (line[i] == ']') {
+                    line[i] = ' ';
+                    i_cut = 0;
+                }
+                if (i_cut == 1) {
+                    line[i] = ' ';
+                }
+            }
+
+            line = g_strchug(line);
+            line = g_strchomp(line);
+
+            if (strlen(line) == 0) {
+                title = strdup("Title");
+            }
+            else {
+                title = strdup(line);
+            }
+
+            free(line_orig);
+            line_orig = NULL;
+
+            return title;
+        }
+
+        free(line_orig);
+        line_orig = NULL;
+    }
+
+    title = strdup("Title");
+    return title;
 }
