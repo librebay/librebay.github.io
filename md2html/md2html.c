@@ -234,26 +234,39 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
         return;
     }
 
-    fprintf(file_html, "<!DOCTYPE HTML>\n");
-    fprintf(file_html, "<html>\n");
+    int len = order * 3 + 1;
+    char *lpath = calloc(len, sizeof(char));
+    for (int i = 0; i < order; i++) {
+        lpath = strncat(lpath, "../", 3);
+    }
+    lpath[len - 1] = '\0';
+
+    fprintf(file_html, "<!DOCTYPE html>\n");
+    fprintf(file_html, "<html lang=\"ru\">\n");
     fprintf(file_html, "  <head>\n");
     fprintf(file_html, "    <meta charset=\"utf-8\">\n");
-    fprintf(file_html, "    <link rel=\"stylesheet\" href=\"/home/maksim/Projects/md2html/style.css\" />\n");
+    fprintf(file_html, "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n");
+    fprintf(file_html, "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n");
 
-    fprintf(file_html, "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/default.min.css\">\n");
-    fprintf(file_html, "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js\"></script>\n");
-    fprintf(file_html, "<script>hljs.initHighlightingOnLoad();</script>\n");
+    fprintf(file_html, "    <title>!!!No name!!!</title>\n\n");
+
+    fprintf(file_html, "    <link href=\"%scss/bootstrap.css\" rel=\"stylesheet\">\n", lpath);
+    fprintf(file_html, "    <link href=\"%scss/librebay.css\" rel=\"stylesheet\">\n\n", lpath);
+
+    fprintf(file_html, "    <link href=\"%scss/highlight.css\" rel=\"stylesheet\">\n", lpath);
+    fprintf(file_html, "    <script src=\"%sjs/highlight.pack.js\"></script>\n", lpath);
+    fprintf(file_html, "    <script>hljs.initHighlightingOnLoad();</script>\n\n");
+
     fprintf(file_html, "  </head>\n");
-    fprintf(file_html, "  <body>\n");
-    fprintf(file_html, "\n\n\n");
+    fprintf(file_html, "  <body>\n\n");
+
+    fprintf(file_html, "    <div class=\"container\" role=\"main\">\n\n\n\n");
 
     fclose(file_html);
 
-    char *command = calloc(1024, sizeof(char));
-
-    sprintf(command, "multimarkdown %s >> %s\n", fname_md, fname_html);
+    gchar *command = g_strconcat("multimarkdown ", fname_md, " >> ", fname_html, "\n", NULL);
     system(command);
-    free(command);
+    g_free(command);
 
     file_html = fopen(fname_html, "a");
 
@@ -262,9 +275,12 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
         return;
     }
 
-    fprintf(file_html, "\n\n\n");
-
+    fprintf(file_html, "\n\n\n    </div>\n");
+    fprintf(file_html, "    <script src=\"%sjs/jquery.js\"></script>\n", lpath);
+    fprintf(file_html, "    <script src=\"%sjs/bootstrap.js\"></script>\n", lpath);
     fprintf(file_html, "  </body>\n");
     fprintf(file_html, "</html>\n");
     fclose(file_html);
+
+    free(lpath);
 }
