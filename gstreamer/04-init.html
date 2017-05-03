@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Фреймворк GStreamer. Руководство разработчика приложений. Инициализация библиотеки фреймворка GStreamer</title>
+
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/librebay.css" rel="stylesheet">
+
+    <link href="../css/highlight.css" rel="stylesheet">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+  </head>
+  <body>
+
+    <div class="container" role="main">
+
+
+
+<h1 id="h1-initializing-gstreamer">Фреймворк GStreamer. Руководство разработчика приложений. Инициализация библиотеки фреймворка GStreamer</h1>
+
+<p>Оригинал: GStreamer Application Development Manual<br/>
+Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br/>
+Дата публикации: 21 мая 2014 г.<br/>
+Перевод: А.Панин<br/>
+Дата перевода: 18 июня 2014 г.<br/>
+Оригинал перевода: <a href="http://rus-linux.net/MyLDP/BOOKS/gstreamer/04-init.html">Фреймворк GStreamer. Руководство разработчика приложений. Инициализация библиотеки фреймворка GStreamer</a></p>
+
+<h2 id="building-an-application">Часть II. Создание приложения</h2>
+
+<p>В следующих главах мы обсудим базовые концепции фреймворка GStreamer и наиболее часто используемые объекты, такие, как элементы, точки соединения и буферы. Мы будем использовать схематичные изображения этих объектов для того, чтобы изобразить более сложные конвейеры, которые вы научитесь создавать позднее. Вы впервые познакомитесь с API фреймворка GStreamer, причем этого знакомства будет достаточно для создания элементарных приложений. Далее в этой части вы найдете информацию о том, как создать простейшее приложение с интерфейсом командной строки.</p>
+
+<p>Учтите, что в данной части вы познакомитесь с низкоуровневыми API и концепциями фреймворка GStreamer. При создании приложений вы можете отдать предпочтение использованию API более высокого уровня. Эти API будут обсуждаться в следующих частях руководства.</p>
+
+<h2 id="initializing-gstreamer">Глава 4. Инициализация библиотеки фреймворка GStreamer</h2>
+
+<p>При разработке приложения на основе фреймворка GStreamer вы можете просто подключить заголовочный файл <code>gst/gst.h</code> для получения доступа к библиотечным функциям. Кроме этого, вам придется инициализировать саму библиотеку фреймворка GStreamer.</p>
+
+<h3 id="simple-initialization">4.1. Простая инициализация</h3>
+
+<p>Перед тем, как библиотеки фреймворка GStreamer смогут использоваться, из главного программного потока приложения должен быть осуществлен вызов функции <code>gst_init</code>. Этот вызов позволит выполнить необходимые операции инициализации библиотеки, а также разобрать специфичные для фреймворка GStreamer параметры командной строки.</p>
+
+<p>Типичная программа<a href="#fn:1" id="fnref:1" title="see footnote" class="footnote">[1]</a> должна содержать аналогичный следующему код для инициализации библиотеки фреймворка GStreamer:</p>
+
+<p><strong>Пример 4.1. Инициализация библиотеки фреймворка GStreamer</strong></p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  const gchar *nano_str;
+  guint major, minor, micro, nano;
+
+  gst_init (&amp;argc, &amp;argv);
+
+  gst_version (&amp;major, &amp;minor, &amp;micro, &amp;nano);
+
+  if (nano == 1)
+    nano_str = &quot;(CVS)&quot;;
+  else if (nano == 2)
+    nano_str = &quot;(Пре-релиз)&quot;;
+  else
+    nano_str = &quot;&quot;;
+
+  printf (&quot;Данная программа связана с библиотекой фреймворка GStreamer версии %d.%d.%d %s\n&quot;,
+          major, minor, micro, nano_str);
+
+  return 0;
+}
+</code></pre>
+
+<p>Используйте макросы <code>GST_VERSION_MAJOR</code>, <code>GST_VERSION_MINOR</code> и <code>GST_VERSION_MICRO</code> для получения версии библиотеки фреймворка GStreamer, с которой будет связываться ваше приложение или функцию <code>gst_version</code> для получения версии библиотеки, с которой оно уже связано. На данный момент фреймворк GStreamer использует схему версий, в которой библиотеки одной и той же версии с одной и той же подверсией совместимы на уровне API и ABI.</p>
+
+<p>Также можете вызывать функцию <code>gst_init</code> с двумя аргументами <code>NULL</code>, но в этом случае никакие из аргументов командной строки не будут разобраны средствами фреймворка GStreamer. </p>
+
+<h3 id="the-goption-interface">4.2. Интерфейс GOption</h3>
+
+<p>Также вы можете использовать интерфейс GOption для инициализации библиотеки фреймворка GStreamer с передачей ваших собственных параметров таким же образом, как показано в следующем примере:</p>
+
+<p><strong>Пример 4.2. Инициализация с использованием интерфейса GOption</strong></p>
+
+<pre><code>#include &lt;gst/gst.h&gt;
+
+int
+main (int   argc,
+      char *argv[])
+{
+  gboolean silent = FALSE;
+  gchar *savefile = NULL;
+  GOptionContext *ctx;
+  GError *err = NULL;
+  GOptionEntry entries[] = {
+    { &quot;silent&quot;, 's', 0, G_OPTION_ARG_NONE, &amp;silent,
+      &quot;не выводить информацию о состоянии&quot;, NULL },
+    { &quot;output&quot;, 'o', 0, G_OPTION_ARG_STRING, &amp;savefile,
+      &quot;сохранить представление конвейера в формате XML в ФАЙЛ и выйти&quot;, &quot;ФАЙЛ&quot; },
+    { NULL }
+  };
+
+  ctx = g_option_context_new (&quot;- Ваше приложение&quot;);
+  g_option_context_add_main_entries (ctx, entries, NULL);
+  g_option_context_add_group (ctx, gst_init_get_option_group ());
+  if (!g_option_context_parse (ctx, &amp;argc, &amp;argv, &amp;err)) {
+    g_print (&quot;Не удалось произвести инициализацию: %s\n&quot;, err-&gt;message);
+    g_error_free (err);
+    return 1;
+  }
+
+  printf (&quot;Запустите программу с аргументом --help для ознакомления с допустимыми параметрами.\n&quot;);
+
+  return 0;
+}
+</code></pre>
+
+<p>Как показано в данном фрагменте кода, вы можете использовать таблицу <a href="http://developer.gnome.org/glib/stable/glib-Commandline-option-parser.html">GOption</a> для описания ваших специфичных для приложения параметров командной строки и передавать эту таблицу функции инициализации библиотеки <code>GLib</code> вместе с группой параметров, возвращаемой функцией <code>gst_init_get_option_group</code>. В этом случае параметры вашего приложения будут разобраны вместе со стандартными параметрами фреймворка GStreamer.</p>
+
+<hr />
+
+<p>Предыдущий раздел : <a href="03-intro-basics.html">Основные концепции</a>.</p>
+
+<p>Следующий раздел : <a href="05-elements.html">Элементы</a>.</p>
+
+<p>Главная страница : <a href="../index.html">http://neon1ks.github.io/</a></p>
+
+<div class="footnotes">
+<hr />
+<ol>
+
+<li id="fn:1">
+<p>Код для данного примера автоматически извлечен из документации и добавлен в директорию <code>tests/examples/manual</code> архива исходного кода фреймворка GStreamer. <a href="#fnref:1" title="return to article" class="reversefootnote">&#160;&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+
+
+
+    </div>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.js"></script>
+  </body>
+</html>

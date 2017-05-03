@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Фреймворк GStreamer. Руководство разработчика приложений. Ваше первое приложение</title>
+
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/librebay.css" rel="stylesheet">
+
+    <link href="../css/highlight.css" rel="stylesheet">
+    <script src="../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+  </head>
+  <body>
+
+    <div class="container" role="main">
+
+
+
+<h1 id="h1-your-first-application">Фреймворк GStreamer. Руководство разработчика приложений. Ваше первое приложение</h1>
+
+<p>Оригинал: GStreamer Application Development Manual<br/>
+Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br/>
+Дата публикации: 21 мая 2014 г.<br/>
+Перевод: А.Панин<br/>
+Дата перевода: 19 июня 2014 г.<br/>
+Оригинал перевода: <a href="http://rus-linux.net/MyLDP/BOOKS/gstreamer/10-helloworld.html">Фреймворк GStreamer. Руководство разработчика приложений. Ваше первое приложение</a></p>
+
+<h2 id="your-first-application">Глава 10. Ваше первое приложение</h2>
+
+<p>В данной главе мы обобщим всю информация из предыдущих глав. В ней освещены все аспекты создания простого приложения на основе фреймворка GStreamer, включая инициализацию библиотек, создание элементов, упаковку элементов с целью формирования конвейера и проигрывание мультимедийного потока с помощью этого конвейера. Выполнив эти действия, вы сможете создать простой проигрыватель аудиофайлов формата Ogg/Vorbis.</p>
+
+<h3 id="hello-world">10.1. Hello world</h3>
+
+<p>Мы будем создавать первое простое приложение, являющееся проигрывателем для аудиофайлов формата Ogg/Vorbis с интерфейсом командной строки. Для этого мы будем использовать стандартные компоненты фреймворка GStreamer. Проигрыватель будет читать файл, заданный с помощью параметра командной строки. Давайте начинать работу!</p>
+
+<p>В Главе 4, <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/chapter-init.html">Главе 4, &#8220;Инициализация библиотеки фреймворка GStreamer&#8221;</a> мы узнали о том, что первой операцией, которую необходимо выполнить с помощью вашего приложения, является инициализация библиотеки фреймворка GStreamer, которая осуществляется путем вызова функции <code>gst_init ()</code>. Также следует убедиться в том, что к исходному коду приложения подключен заголовочный файл <code>gst/gst.h</code>, который содержит необходимые объявления всех имен функций и объектов. Используйте директиву <code>#include &lt;gst/gst.h&gt;</code> для подключения этого файла.</p>
+
+<p>После этого вы захотите создать различные элементы с помощью функции <code>gst_element_factory_make ()</code>. Для реализации проигрывателя аудиофайлов формата Ogg/Vorbis нам потребуется элемент для ввода данных, который будет читать данные с диска. Фреймворк GStreamer включает элемент с описанными функциями и именем &#8220;filesrc&#8221;. Далее, нам потребуются какие-либо элементы для разбора файла, а также его декодирования с целью получения раскодированного аудиопотока. Для этой цели в составе фреймворка GStreamer имеются два элемента: первый элемент позволяет осуществить разбор потока формата Ogg на элементарные потоки (аудио- и видеопотоки) и носит имя &#8220;oggdemux&#8221;. Второй элемент является декодером аудиопотока формата Vorbis и, соответственно, назван &#8220;vorbisdec&#8221;. Так как элемент &#8220;oggdemux&#8221; создает динамические точки соединения для каждого элементарного потока, вам придется устанавливать обработчик сигнала добавления точки соединения &#8220;pad-added&#8221; для элемента &#8220;oggdemux&#8221; таким же образом, как описано в разделе под названием <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/chapter-pads.html#section-pads-dynamic">&#8220;Динамические (или не постоянно доступные) точки соединения&#8221;</a> для того, чтобы связать элемент демультиплексора потока формата Ogg с элементом декодера аудиопотока формата Vorbis. Наконец, нам также потребуется элемент для вывода аудиоданных, в качестве которого мы используем элемент с именем &#8220;autoaudiosink&#8221;, который автоматически определит звуковое устройство.</p>
+
+<p>Последняя операция, которую нам стоит выполнить, заключается в добавлении всех элементов в контейнерный элемент типа <code>GstPipeline</code> и ожидании завершения проигрывания всей композиции. Ранее мы узнали о том, как как добавлять элементы в контейнерный элемент в <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/chapter-bins.html">Главе 6, &#8220;Контейнеры&#8221;</a>, а также о состояниях элементов в <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/section-elements-states.html">разделе под названием &#8220;Состояния элементов&#8221;</a>. Кроме того, мы также установим обработчик сообщений конвейера для того, чтобы получать уведомления об ошибках и определять момент окончания потока. </p>
+
+<p>А теперь давайте объединим все наши размышления в форме кода для того, чтобы получить наш первый проигрыватель аудиофайлов:</p>
+
+<pre><code>#include &lt;gst/gst.h&gt;
+#include &lt;glib.h&gt;
+
+
+static gboolean
+bus_call (GstBus     *bus,
+          GstMessage *msg,
+          gpointer    data)
+{
+  GMainLoop *loop = (GMainLoop *) data;
+
+  switch (GST_MESSAGE_TYPE (msg)) {
+
+    case GST_MESSAGE_EOS:
+      g_print (&quot;Окончание потока\n&quot;);
+      g_main_loop_quit (loop);
+      break;
+
+    case GST_MESSAGE_ERROR: {
+      gchar  *debug;
+      GError *error;
+
+      gst_message_parse_error (msg, &amp;error, &amp;debug);
+      g_free (debug);
+
+      g_printerr (&quot;Ошибка: %s\n&quot;, error-&gt;message);
+      g_error_free (error);
+
+      g_main_loop_quit (loop);
+      break;
+    }
+    default:
+      break;
+  }
+
+  return TRUE;
+}
+
+
+static void
+on_pad_added (GstElement *element,
+              GstPad     *pad,
+              gpointer    data)
+{
+  GstPad *sinkpad;
+  GstElement *decoder = (GstElement *) data;
+
+  /* Теперь мы можем связать эту точку соединения с входной точкой соединения элемента декодирования аудиопотока формата vorbis */
+  g_print (&quot;Динамическая точка соединения создана и связывает демультиплексор с декодером\n&quot;);
+
+  sinkpad = gst_element_get_static_pad (decoder, &quot;sink&quot;);
+
+  gst_pad_link (pad, sinkpad);
+
+  gst_object_unref (sinkpad);
+}
+
+
+
+int
+main (int   argc,
+      char *argv[])
+{
+  GMainLoop *loop;
+
+  GstElement *pipeline, *source, *demuxer, *decoder, *conv, *sink;
+  GstBus *bus;
+  guint bus_watch_id;
+
+  /* Инициализация */
+  gst_init (&amp;argc, &amp;argv);
+
+  loop = g_main_loop_new (NULL, FALSE);
+
+
+  /* Проверка входных аргументов */
+  if (argc != 2) {
+    g_printerr (&quot;Использование: %s &lt;имя файла формата Ogg/Vorbis&gt;\n&quot;, argv[0]);
+    return -1;
+  }
+
+
+  /* Создание элементов из состава фреймворка GStreamer */
+  pipeline = gst_pipeline_new (&quot;audio-player&quot;);
+  source   = gst_element_factory_make (&quot;filesrc&quot;,       &quot;file-source&quot;);
+  demuxer  = gst_element_factory_make (&quot;oggdemux&quot;,      &quot;ogg-demuxer&quot;);
+  decoder  = gst_element_factory_make (&quot;vorbisdec&quot;,     &quot;vorbis-decoder&quot;);
+  conv     = gst_element_factory_make (&quot;audioconvert&quot;,  &quot;converter&quot;);
+  sink     = gst_element_factory_make (&quot;autoaudiosink&quot;, &quot;audio-output&quot;);
+
+  if (!pipeline || !source || !demuxer || !decoder || !conv || !sink) {
+    g_printerr (&quot;Не удалось создать один из элементов конвейера. Работа приложения завершена.\n&quot;);
+    return -1;
+  }
+
+  /* Настройка конвейера */
+
+  /* Передаем заданное имя аудиофайла элементу для ввода данных  */
+  g_object_set (G_OBJECT (source), &quot;location&quot;, argv[1], NULL);
+
+  /* Устанавливаем обработчик сообщений */
+  bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
+  bus_watch_id = gst_bus_add_watch (bus, bus_call, loop);
+  gst_object_unref (bus);
+
+  /* Добавляем все элементы в конвейер */
+  /* file-source | ogg-demuxer | vorbis-decoder | converter | alsa-output */
+  gst_bin_add_many (GST_BIN (pipeline),
+                    source, demuxer, decoder, conv, sink, NULL);
+
+  /* Связываем элементы друг с другом */
+  /* file-source -&gt; ogg-demuxer ~&gt; vorbis-decoder -&gt; converter -&gt; alsa-output */
+  gst_element_link (source, demuxer);
+  gst_element_link_many (decoder, conv, sink, NULL);
+  g_signal_connect (demuxer, &quot;pad-added&quot;, G_CALLBACK (on_pad_added), decoder);
+
+  /* Помните о том, что демультиплексор будет связываться с декодером динамически.
+     Это происходит из-за того, что поток формата Ogg может содержать различные потоки 
+     (например, аудио-  и видеопотоки). Выходные точки соединения будут создаваться 
+     демультиплексором в процессе работы приложения по мере определения количества и
+     и типа элементарных потоков. Исходя из этого, мы устанавливаем функцию обратного
+     вызова, которая будет вызвана в момент генерации сигнала &quot;pad-added&quot;.*/
+
+
+  /* Перевод конвейера в состояние &quot;проигрывается&quot;*/
+  g_print (&quot;В данный момент проигрывается: %s\n&quot;, argv[1]);
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+
+
+  /* Итерация */
+  g_print (&quot;Приложение выполняется...\n&quot;);
+  g_main_loop_run (loop);
+
+
+  /* Выход из главного цикла обработки событий, аккуратное освобождение ресурсов */
+  g_print (&quot;Завершение работы приложения, окончание воспроизведения\n&quot;);
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+
+  g_print (&quot;Уничтожение конвейера\n&quot;);
+  gst_object_unref (GST_OBJECT (pipeline));
+  g_source_remove (bus_watch_id);
+  g_main_loop_unref (loop);
+
+  return 0;
+}
+</code></pre>
+
+<p>Мы создали завершенный конвейер. Теперь мы можем схематично изобразить его следующим образом:</p>
+
+<figure>
+<img src="images/hello-world-ru.png" alt="Рисунок 10.1. Конвейер приложения hello world" />
+<figcaption>Рисунок 10.1. Конвейер приложения &#8220;hello world&#8221;</figcaption>
+</figure>
+
+<h3 id="compiling-and-running-helloworldc">10.2. Компиляция файла helloworld.c и запуск приложения</h3>
+
+<p>Для компиляции примера &#8220;helloworld&#8221; следует использовать команду: <code>gcc -Wall helloworld.c -o helloworld $(pkg-config --cflags --libs gstreamer-1.0)</code>. Фреймворк GStreamer использует инструмент <strong>pkg-config</strong> для получения флагов компилятора и линковщика, необходимых для компиляции данного приложения.</p>
+
+<p>В том случае, если вы используете нестандартную установку (т.е., вы самостоятельно скомпилировали исходный код и установили библиотеки фреймворка GStreamer вместо того, чтобы использовать предварительно собранные пакеты), убедитесь в том, что переменная окружения <code>PKG_CONFIG_PATH</code> указывает на корректную директорию (<code>$libdir/pkgconfig</code>).</p>
+
+<p>В маловероятном случае использования не устанавливаемой версии фреймворка GStreamer (т.е., gst-uninstalled), вам придется использовать инструмент libtool для выполнения сборки программы helloworld с помощью аналогичной команды: <code>libtool --mode=link gcc -Wall helloworld.c -o helloworld $(pkg-config --cflags --libs gstreamer-1.0)</code>.</p>
+
+<p>Вы можете запустить приложение, собранное на основе кода из данного примера, воспользовавшись командой <code>./helloworld file.ogg</code>. Замените <code>file.ogg</code> на имя файла формата Ogg/Vorbis с вашей любимой композицией.</p>
+
+<h3 id="conclusion">10.3. Заключение</h3>
+
+<p>Настало время для заключительных пояснений относительно нашего примера. Как вы видите, создание конвейера является очень низкоуровневой, но мощной операцией. В следующих частях руководства вы познакомитесь с методикой создания более мощного мультимедийного проигрывателя, требующей меньше усилий благодаря использованию более высокоуровневых интерфейсов. Обо всем этом мы поговорим в <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/manual/html/part-highlevel.html">Части IV, &#8220;Высокоуровневые интерфейсы для приложений на основе фреймворка GStreamer&#8221;</a>. Однако, сначала мы подробнее обсудим более сложные внутренние механизмы фреймворка GStreamer.</p>
+
+<p>При рассмотрении примера должно быть ясно то, что мы можем достаточно просто заменить элемент с именем &#8220;filesrc&#8221; на какой-либо другой элемент, который будет принимать данные посредством сети или другой элемент ввода данных, который будет лучше интегрирован с вашим окружением рабочего стола. Вы также можете использовать другие декодеры и элементы разбора потоков/демультиплексоры для добавления поддержки мультимедийных потоков других типов. К тому же, вы можете использовать другой элемент вывода аудиопотока в том случае, если вы используете не Linux, а Mac OS X, Windows или FreeBSD, причем вместо него вы можете использовать элемент вывода данных для записи аудиопотоков в файлы на диске вместо их воспроизведения. Используя элемент для ввода данных, работающий с аудиокартой, вы можете даже захватывать аудиопоток вместо его проигрывания. Все эти примеры свидетельствуют о наличии возможности повторного использования элементов фреймворка GStreamer, которая является его значительным преимуществом.</p>
+
+<hr />
+
+<p>Предыдущий раздел : <a href="09-data.html">Буферы и события</a></p>
+
+<p>Следующий раздел : Отслеживание позиции в перемещение в мультимедийном потоке.</p>
+
+<p>Главная страница : <a href="../index.html">http://neon1ks.github.io/</a></p>
+
+
+
+    </div>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/bootstrap.js"></script>
+  </body>
+</html>
