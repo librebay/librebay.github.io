@@ -29,3 +29,6 @@ figure > figcaption {
 pre {
     margin-bottom: 2rem;
 }
+blockquote {
+    font-size: 15px;
+}
