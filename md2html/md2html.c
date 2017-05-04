@@ -121,7 +121,11 @@ void parse_dir(const char *path, const int order)
         if (entry->d_name[0] == '.') {
             continue;
         }
-        if (!strcmp(entry->d_name, "md2html") && order == 0) {
+        if ((order == 0) &&
+            (!strcmp(entry->d_name, "md2html") ||
+            !strcmp(entry->d_name, "css") ||
+            !strcmp(entry->d_name, "js") ||
+            !strcmp(entry->d_name, "fonts"))) {
             continue;
         }
 
