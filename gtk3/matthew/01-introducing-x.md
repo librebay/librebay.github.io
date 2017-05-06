@@ -94,6 +94,6 @@ Xlib &mdash; это библиотека, неявно используемая 
 
 Назад: [Программирование в GNOME с помощью GTK+](00-programming-gnome-using-gtk.html).
 
-Далее:
+Далее: [Введение в GTK+](02-introducing-gtk.html).
 
 Вернуться  [на главную страницу](../../index.html).
