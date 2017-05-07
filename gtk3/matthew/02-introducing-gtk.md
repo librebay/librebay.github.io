@@ -211,4 +211,6 @@ gtk_widget_show(window);
 
 Назад: [Введение в систему X](01-introducing-x.html).
 
+Далее: [События, сигналы и обратные вызовы](03-events-signals-and-callbacks.html)
+
 Вернуться  [на главную страницу](../../index.html).
