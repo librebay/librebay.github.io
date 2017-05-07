@@ -255,6 +255,8 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
 
     fprintf(file_html, "    <title>%s</title>\n\n", title);
 
+    fprintf(file_html, "    <link href=\"%sfavicon.ico\" rel=\"shortcut icon\" type=\"image/vnd.microsoft.icon\" />\n\n",  lpath);
+
     fprintf(file_html, "    <link href=\"%scss/bootstrap.css\" rel=\"stylesheet\">\n", lpath);
     fprintf(file_html, "    <link href=\"%scss/librebay.css\" rel=\"stylesheet\">\n\n", lpath);
 
