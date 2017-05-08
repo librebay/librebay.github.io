@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Виджеты упаковочных контейнеров</title>
+
+    <link href="../../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+
+    <link href="../../css/bootstrap.css" rel="stylesheet">
+    <link href="../../css/librebay.css" rel="stylesheet">
+
+    <link href="../../css/highlight.css" rel="stylesheet">
+    <script src="../../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+  </head>
+  <body>
+
+    <div class="container" role="main">
+
+
+
+<h1 id="packing-box-widgets">Виджеты упаковочных контейнеров</h1>
+
+<p>Компоновка GUI исключительно важна для удобства применения интерфейса, и добиться наилучшей компоновки труднее всего. Реальная трудность в размещении виджетов заключается в том, что вы не можете полагаться на наличие у всех пользователей одинаковых размеров окон, тем, шрифтов и цветовых схем. То, что может быть отличным интерфейсом для одной системы, в другой системе может оказаться просто нечитаемым.</p>
+
+<p>Для создания GUI, который выглядит одинаково во всех системах, вам необходимо избегать размещения виджетов на основе абсолютных координат и использовать более гибкую систему компоновки. У GTK+ есть для этой цели виджеты контейнеров. Виджеты-контейнеры позволяют управлять компоновкой виджетов в окнах вашего приложения. Виджеты упаковочных контейнеров (на основе <code>GtkBox</code>) представляют очень удобный тип виджета-контейнера. GTK+ предлагает множество виджетов-контейнеров других типов, описанных в интерактивной документации к GTK+.</p>
+
+<p><em>Виджеты упаковочных контейнеров</em> &mdash; невидимые виджеты, задача которых &mdash; хранить другие виджеты и управлять их компоновкой или схемой размещения. Для управления размером отдельных виджетов, содержащихся в виджете упаковочного контейнера, вы задаёте правила вместо координат. Поскольку виджеты упаковочных контейнеров могут содержать любые объекты <code>GtkWidget</code> и объект <code>GtkBox</code> сам является объектом типа <code>GtkWidget</code>, для создания сложных компоновок можно формировать виджеты упаковочных контейнеров, вложенные один в другой.</p>
+
+<p>Виджет-контейнер <code>GtkBox</code> создаётся функцией:</p>
+
+<pre><code>GtkWidget *gtk_box_new (GtkOrientation orientation, gint spacing);
+</code></pre>
+
+<p>При вызове функции <code>gtk_box_new</code> задают два параметра: <code>orientation</code> и <code>spacing</code>. Эти параметры управляют компоновкой всех виджетов в конкретном упаковочном контейнере.</p>
+
+<p>Первый параметр <code>orientation</code> определяет как располагать виджеты:</p>
+
+<ul>
+<li>горизонтально, указав <code>GTK_ORIENTATION_HORIZONTAL</code>;</li>
+<li>Или вертикально &mdash; <code>GTK_ORIENTATION_VERTICAL</code>.</li>
+</ul>
+
+<p>Параметр <code>spacing</code> задает расстояние между виджетами в пикселях.</p>
+
+<p>После того как упаковочный контейнер создан, добавьте в него виджеты с помощью функций <code>gtk_box_pack_start</code> и <code>gtk_box_pack_end</code>:</p>
+
+<pre><code>void gtk_box_pack_start (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+void gtk_box_pack_end (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+</code></pre>
+
+<p>Функция <code>gtk_box_pack_start</code> упаковывает виджеты в <code>GtkBox</code> от начала к концу. А <code>gtk_box_pack_end</code>, наоборот, начинает от конца контейнера. Параметры функций управляют расстоянием между виджетами и форматом каждого виджета, находящегося в упаковочном контейнере.</p>
+
+<p>В таблице 1 описаны параметры, которые вы можете передавать в функцию <code>gtk_box_pack_start</code> или <code>gtk_box_pack_end</code>.</p>
+
+<table class="table">
+<caption>Таблица 1.</caption>
+<colgroup>
+<col class="col-md-3">
+<col class="col-md-9">
+</colgroup>
+<thead>
+<tr>
+<th>Параметр</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GtkBox *box</code></td>
+<td>Заполняемый упаковочный контейнер</td>
+</tr>
+<tr>
+<td><code>GtkWidget *child</code></td>
+<td>Виджет, который следует поместить в упаковочный контейнер</td>
+</tr>
+<tr>
+<td><code>gboolean expand</code></td>
+<td>Если равен <code>TRUE</code>, данный виджет занимает всё доступное пространство, используемое совместно с другими виджетами, у которых этот флаг также равен <code>TRUE</code></td>
+</tr>
+<tr>
+<td><code>gboolean fill</code></td>
+<td>Если равен <code>TRUE</code>, данный виджет будет занимать всю доступную площадь вместо использования её как отступа от краёв. Действует, только если флаг <code>expand</code> равен <code>TRUE</code></td>
+</tr>
+<tr>
+<td><code>guint padding</code></td>
+<td>Размер отступа вокруг виджета в пикселях</td>
+</tr>
+</tbody>
+</table>
+
+<p>Давайте теперь рассмотрим эти виджеты упаковочных контейнеров и создадим более сложный пользовательский интерфейс, демонстрирующий вложенные упаковочные контейнеры.</p>
+
+<h2 id="widget-container-layout">Макет виджета-контейнера</h2>
+
+<p>В этом примере вы спланируете размещение нескольких простых виджетов-меток типа <code>GtkLabel</code> с помощью контейнеров <code>GtkBox</code>. Виджеты-метки &mdash; простые графические элементы, подходящие для вывода коротких текстовых фрагментов. Назовите эту программу <code>gtk_container.c</code>:</p>
+
+<pre><code class="C">#include &lt;gtk/gtk.h&gt;
+
+void my_close_app(GtkWidget *window, gpointer data)
+{
+    gtk_main_quit();
+}
+
+// Обратный вызов позволяет приложению отменить событие close/destroy.
+// (Для отмены возвращает TRUE.)
+gboolean my_delete_event(GtkWidget *widget, GdkEvent *event, gpointer data)
+{
+    printf(&quot;In delete_event\n&quot;);
+
+    return FALSE;
+}
+
+int main(int argc, char *argv[])
+{
+    GtkWidget *window;
+    GtkWidget *label1, *label2, *label3;
+    GtkWidget *hbox, *vbox;
+
+    gtk_init(&amp;argc, &amp;argv);
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    gtk_window_set_title(GTK_WINDOW(window), &quot;The Window Title&quot;);
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+
+    g_signal_connect(G_OBJECT(window), &quot;destroy&quot;,
+                     G_CALLBACK(my_close_app), NULL);
+
+    g_signal_connect(G_OBJECT(window), &quot;delete_event&quot;,
+                     G_CALLBACK(my_delete_event), NULL);
+
+    label1 = gtk_label_new(&quot;Label 1&quot;);
+    label2 = gtk_label_new(&quot;Label 2&quot;);
+    label3 = gtk_label_new(&quot;Label 3&quot;);
+
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+
+    gtk_box_pack_start(GTK_BOX(vbox), label1, TRUE, FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(vbox), label2, TRUE, FALSE, 5);
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(hbox), label3, TRUE, FALSE, 5);
+
+    gtk_container_add(GTK_CONTAINER(window), hbox);
+
+    gtk_widget_show_all(window);
+
+    gtk_main();
+
+    return 0;
+}
+</code></pre>
+
+<p>Когда вы выполните эту программу, то увидите следующую схему расположения виджетов-меток в вашем окне (рис. 1).</p>
+
+<figure>
+<img src="images/gtk_container.png" alt="Рис.1. Размещение меток в контейнерах" />
+<figcaption>Рис.1. Размещение меток в контейнерах</figcaption>
+</figure>
+
+<h4 id="how-it-works">Как это работает</h4>
+
+<p>Вы создаёте два виджета упаковочных контейнеров: <code>hbox</code> и <code>vbox</code>, горизонтальный и вертикальный, соответственно. С помощью функции <code>gtk_box_pack_start</code> вы заполняете <code>vbox</code> виджетами <code>label1</code> и <code>label2</code>, причем <code>label2</code> располагается у нижнего края контейнера, потому что вставляется после <code>label1</code>. Далее контейнер <code>vbox</code> целиком наряду с меткой <code>label3</code> вставляется в контейнер <code>hbox</code>.</p>
+
+<p>В заключении <code>hbox</code> добавляется в окно и выводится на экран с помощью функции <code>gtk_widget_show_all</code>.</p>
+
+<p>Схему размещения упаковочных контейнеров легче понять с помощью блок-схемы, показанной на рис. 2.</p>
+
+<figure>
+<img src="images/packing-box-layout-diagram.png" alt="Рис. 2. Блок-схема размещения упаковочных контейнеров" />
+<figcaption>Рис. 2. Блок-схема размещения упаковочных контейнеров</figcaption>
+</figure>
+
+<p>Познакомившись с виджетами, сигналами, обратными вызовами и виджетами-контейнерами, вы рассмотрели основы комплекта инструментов GTK+. Но для того, чтобы стать программистом, профессионально применяющим GTK+, нужно понять, как наилучшим образом использовать имеющиеся в комплекте виджеты.</p>
+
+<hr />
+
+<p>Назад: <a href="03-events-signals-and-callbacks.html">События, сигналы и обратные вызовы</a></p>
+
+<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
+
+
+
+    </div>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+  </body>
+</html>
