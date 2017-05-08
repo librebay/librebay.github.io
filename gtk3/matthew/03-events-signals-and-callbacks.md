@@ -115,4 +115,6 @@ gtk_container_add(GTK_CONTAINER(window), button);
 
 Назад: [Введение в GTK+](02-introducing-gtk.html)
 
+Далее: [Виджеты упаковочных контейнеров](04-packing-box-widgets.html)
+
 Вернуться  [на главную страницу](../../index.html).
