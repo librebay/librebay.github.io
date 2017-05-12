@@ -9,3 +9,4 @@
 - [Введение в GTK+](gtk3/matthew/02-introducing-gtk.html)
 - [События, сигналы и обратные вызовы](gtk3/matthew/03-events-signals-and-callbacks.html)
 - [Виджеты упаковочных контейнеров](gtk3/matthew/04-packing-box-widgets.html)
+- [Виджеты GTK+](gtk3/matthew/05-widgets-gtk.html)
