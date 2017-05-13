@@ -32,3 +32,11 @@
     - [GtkRadioButton](gtk3/matthew/09-widgets-gtkbutton.html#gtkradiobutton)
     - [Пример: использование кнопок GtkButton](gtk3/matthew/09-widgets-gtkbutton.html#example-use-gtk-buttons)
 - [Виджет GtkTreeView](gtk3/matthew/10-widgets-gtktreeview.html)
+    - [Пример: использование виджета GtkTreeView](gtk3/matthew/10-widgets-gtktreeview.html#example-use-gtktreeview)
+
+
+
+
+
+
+
