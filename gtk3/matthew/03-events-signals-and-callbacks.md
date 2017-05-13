@@ -38,7 +38,7 @@ gulong g_signal_connect(gpointer *object, const gchar* name, GCallback func, gpo
 >
 > До появления GTK+ 2 для связывания функций обратного вызова применялась функция-макрос `gtk_signal_connect`. Начиная с GTK+ 2, она была заменена на функцию-макрос `g_signal_connect`.
 
-### Функция обратного вызова [a-callback-function]
+### Пример: Функция обратного вызова [example-a-callback-function]
 
 Рассмотрим пример, где опробуем работу функции-макроса `g_signal_connect`.
 
