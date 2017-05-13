@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>GtkSpinButton</title>
+
+    <link href="../../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+
+    <link href="../../css/bootstrap.css" rel="stylesheet">
+    <link href="../../css/librebay.css" rel="stylesheet">
+
+    <link href="../../css/highlight.css" rel="stylesheet">
+    <script src="../../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+  </head>
+  <body>
+
+    <div class="container" role="main">
+
+
+
+<h1 id="gtkspinbutton">GtkSpinButton</h1>
+
+<p>Порой вам нужно, чтобы пользователь ввел числовое значение, например, максимальную скорость или размер инструмента, и в такой ситуации виджет <code>GtkSpinButton</code> (кнопка-счетчик) идеален. Он ограничивает ввод пользователя только цифровыми символами и можно задать диапазон допустимых значений от нижней до верхней границы. Виджет также содержит кнопки, плюс и минус, так что пользователь может &#8220;накручивать&#8221; значение, для удобства пользуясь только мышью.</p>
+
+<pre><code class="nohighlight">GObject
+╰── GInitiallyUnowned
+    ╰── GtkWidget
+        ╰── GtkEntry
+            ╰── GtkSpinButton
+</code></pre>
+
+<p>И снова API понятен, и мы перечислим наиболее часто применяемые вызовы:</p>
+
+<pre><code class="C">GtkWidget *gtk_spin_button_new              (GtkAdjustment *adjustment, gdouble climb_rate, guint digits);
+GtkWidget *gtk_spin_button_new_with_range   (gdouble min, gdouble max, gdouble step);
+void       gtk_spin_button_set_digits       (GtkSpinButton *spin_button, guint digits);
+void       gtk_spin_button_set_increments   (GtkSpinButton *spin_button, gdouble step, gdouble page);
+void       gtk_spin_button_set_range        (GtkSpinButton *spin_button, gdouble min, gdouble max);
+gdouble    gtk_spin_button_get_value        (GtkSpinButton *spin_button);
+gint       gtk_spin_button_get_value_as_int (GtkSpinButton *spin_button);
+void       gtk_spin_button_set_value        (GtkSpinButton *spin_button, gdouble value);
+</code></pre>
+
+<p>Для создания виджета типа <code>GtkSpinButton</code> с помощью функции <code>gtk_spin_button_new()</code> вы сначала должны создать объект <code>GtkAdjustment</code>. Виджет <code>GtkAdjustment</code> &mdash; это абстрактный объект содержащий логику, касающуюся управления значениями с ограничениями. Он также применяется и в других виджетах, например, <code>GtkScale</code>.</p>
+
+<p>Для создания объекта типа <code>GtkAdjustment</code> передайте в функцию нижнюю и верхнюю границы и размер приращения.</p>
+
+<pre><code>GtkAdjustment *
+gtk_adjustment_new (gdouble value,          // Начальное значение
+                    gdouble lower,          // Минимальное значение
+                    gdouble upper,          // Максимальное значение
+                    gdouble step_increment, // Шаг приращения
+                    gdouble page_increment, // Страничное приращение
+                    gdouble page_size);     // Размер страницы
+</code></pre>
+
+<p>Значения параметров <code>step_increment</code> и <code>page_increment</code> задают величину минимального и максимального приращений. В случае кнопки-счетчика <code>GtkSpinButton</code> параметр <code>step_increment</code> определяет, насколько изменится значение при щелчке мышью по кнопкам виджета. Параметры <code>page_increment</code> и <code>page_size</code> в виджетах <code>GtkSpinButton</code> не важны.</p>
+
+<p>Второй параметр, <code>climb_rate</code>, в функции <code>gtk_spin_button_new()</code> управляет скоростью прокрутки значений при нажатии и удерживании кнопки со стрелкой. И наконец, параметр <code>digits</code> задаёт точность представления числового значения виджета, если, например, <code>digits</code> равен 2, кнопка-счетчик отобразит <code>0.00</code>.</p>
+
+<p>Функция <code>gtk_spin_button_new_with_range()</code> &mdash; удобный способ создания объекта <code>GtkSpinButton</code>. Просто задайте нижнюю и верхнюю границы и величину приращения.</p>
+
+<p>Прочесть текущее значение очень легко благодаря функции <code>gtk_spin_button_get_value()</code>, а если вам нужно целое число, можно применить функцию <code>gtk_spin_button_get_value_as_int()</code>.</p>
+
+<h3 id="example-use-gtkspinbutton">Пример: использование виджета GtkSpinButton</h3>
+
+<p>Сейчас мы посмотрим в коротком примере, как действует кнопка-счётчик <code>GtkSpinButton</code>. Назовите файл <code>gtk_spin.c</code>.</p>
+
+<pre><code class="C">#include &lt;gtk/gtk.h&gt;
+
+void closeApp(GtkWidget *window, gpointer data)
+{
+    gtk_main_quit();
+}
+
+
+int main(int argc, char *argv[])
+{
+    GtkWidget *window;
+    GtkWidget *spinbutton;
+    GtkAdjustment *adjustment;
+
+    gtk_init(&amp;argc, &amp;argv);
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), &quot;GtkSpinButton&quot;);
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+
+    g_signal_connect(G_OBJECT(window), &quot;destroy&quot;, G_CALLBACK(closeApp), NULL);
+
+    adjustment = gtk_adjustment_new(100.0, 50.0, 150.0, 0.5, 1.0, 1.0);
+    spinbutton = gtk_spin_button_new(adjustment, 0.01, 2);
+
+    gtk_container_add(GTK_CONTAINER(window), spinbutton);
+
+    gtk_widget_show_all(window);
+
+    gtk_main();
+
+    return 0;
+}
+</code></pre>
+
+<p>Когда вы выполните программу, по получите кнопку-счётчик, ограниченную диапазонов значений 50&ndash;150 (рис. 2).</p>
+
+<figure>
+<img src="images/gtk_spin_button.png" alt="Рис. 2. Использование виджета GtkSpinButton" />
+<figcaption>Рис. 2. Использование виджета GtkSpinButton</figcaption>
+</figure>
+
+<hr />
+
+<p>Назад: <a href="07-widgets-gtkentry.html">Виджет GtkEntry</a></p>
+
+<p>Далее: <a href="09-widgets-gtkbutton.html">Виджеты класса GtkButton</a></p>
+
+<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
+
+
+
+    </div>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+  </body>
+</html>

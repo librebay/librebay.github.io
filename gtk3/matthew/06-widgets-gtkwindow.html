@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>GtkWindow</title>
+
+    <link href="../../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+
+    <link href="../../css/bootstrap.css" rel="stylesheet">
+    <link href="../../css/librebay.css" rel="stylesheet">
+
+    <link href="../../css/highlight.css" rel="stylesheet">
+    <script src="../../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+  </head>
+  <body>
+
+    <div class="container" role="main">
+
+
+
+<h1 id="gtkwindow">GtkWindow</h1>
+
+<p><code>GtkWindow</code> &mdash; базовый элемент всех приложений GTK+. До сих пор вы использовали его для хранения своих виджетов.</p>
+
+<pre><code class="nohighlight">GObject
+╰── GInitiallyUnowned
+    ╰── GtkWidget
+        ╰── GtkContainer
+            ╰── GtkBin
+                ╰── GtkWindow
+</code></pre>
+
+<p>Существуют десятки вызовов API <code>GtkWindow</code>, но далее приведены функции, заслуживающие особого внимания.</p>
+
+<pre><code class="C">GtkWidget *gtk_window_new              (GtkWindowType type);
+void       gtk_window_set_title        (GtkWindow *window, const gchar *title);
+void       gtk_window_set_position     (GtkWindow *window, GtkWindowPosition position);
+void       gtk_window_set_default_size (GtkWindow *window, gint width, gint height);
+void       gtk_window_resize           (GtkWindow *window, gint width, gint height);
+void       gtk_window_set_resizable    (GtkWindow *window, gboolean resizable);
+void       gtk_window_present          (GtkWindow *window);
+void       gtk_window_maximize         (GtkWindow *window);
+void       gtk_window_unmaximize       (GtkWindow *window);
+</code></pre>
+
+<p>Как вы видели, функция <code>gtk_window_new</code> создаёт в памяти новое пустое окно. Заголовок окна не задан и местоположение окна не определены. Обычно вы будете заполнять окно виджетами и задавать меню и панель инструментов перед выводом окна на экран с помощью вызова функции <code>gtk_widget_show</code>.</p>
+
+<p>Функция <code>gtk_window_set_title</code> изменяет текст полосы заголовка, информируя оконный менеджер запроса.</p>
+
+<blockquote>
+<p><em>Примечание</em></p>
+
+<p>Поскольку за отображение оформления окна отвечает оконный менеджер, а не библиотека GTK+, шрифт, цвет и размер текста зависят от вашего выбора оконного менеджера.</p>
+</blockquote>
+
+<p>Функция <code>gtk_window_set_position</code> управляет начальным местоположением на экране. Параметр <code>position</code> может принимать пять значений, перечисленных в табл. 1.</p>
+
+<table class="table">
+<caption>Таблица 1.</caption>
+<colgroup>
+<col class="col-md-4">
+<col class="col-md-8">
+</colgroup>
+<thead>
+<tr>
+<th>Параметр <code>position</code></th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GTK_WIN_POS_NONE</code></td>
+<td>Окно располагается по усмотрению оконного менеджера</td>
+</tr>
+<tr>
+<td><code>GTK_WIN_POS_CENTER</code></td>
+<td>Окно центрируется на экране</td>
+</tr>
+<tr>
+<td><code>GTK_WIN_POS_MOUSE</code></td>
+<td>Расположение окна задается указателем мыши</td>
+</tr>
+<tr>
+<td><code>GTK_WIN_POS_CENTER_ALWAYS</code></td>
+<td>Окно остаётся отцентрированным независимо от его размера</td>
+</tr>
+<tr>
+<td><code>GTK_WIN_POS_CENTER_ON_PARENT</code></td>
+<td>Окно центрируется относительно родительского окна (удобно для диалоговых окон)</td>
+</tr>
+</tbody>
+</table>
+
+<p>Функция <code>gtk_window_set_default_size</code> задаёт окно на экране в единицах отображения GTK+. Явное задание размера окна гарантирует, что содержимое окна не будет закрыто чем-либо или скрыто. Для того чтобы изменить размеры окна после его вывода на экран, можно воспользоваться функцией <code>gtk_window_resize</code>. По умолчанию пользователь может изменить размер окна, перемещая обычным способом его границу мышью. Если вы хотите помешать этому, можно вызвать функцию <code>gtk_window_set_resizable</code>, приравненную <code>FALSE</code>.</p>
+
+<p>Для того чтобы убедиться в том, что ваше окно присутствует на экране и видно пользователю, т.е. не свернуто или скрыто, подойдет функция <code>gtk_window_present</code>. Она полезна для диалоговых окон, т.е. позволяет убедиться в том, что она не свернуты, когда вам нужен какой-либо пользовательский ввод. В противном случае, для раскрытия окна на весь экран и его сворачивания у вас есть функции <code>gtk_window_maximize</code> и <code>gtk_window_unmaximize</code>.</p>
+
+<hr />
+
+<p>Назад: <a href="05-widgets-gtk.html">Виджеты GTK+</a></p>
+
+<p>Далее: <a href="07-widgets-gtkentry.html">Виджет GtkEntry</a></p>
+
+<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
+
+
+
+    </div>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+  </body>
+</html>

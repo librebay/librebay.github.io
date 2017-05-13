@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>GtkTreeView</title>
+
+    <link href="../../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+
+    <link href="../../css/bootstrap.css" rel="stylesheet">
+    <link href="../../css/librebay.css" rel="stylesheet">
+
+    <link href="../../css/highlight.css" rel="stylesheet">
+    <script src="../../js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+  </head>
+  <body>
+
+    <div class="container" role="main">
+
+
+
+<h1 id="gtktreeview">GtkTreeView</h1>
+
+<p>К этому моменту мы рассмотрели несколько простых виджетов GTK+, но не все виджеты представляют собой однострочные инструменты для ввода или отображения. Сложность виджетов ничего не ограничивается, и <code>GtkTreeView</code> &mdash; яркий пример виджета, собравшего в себя огромный объем функциональных возможностей.</p>
+
+<pre><code class="nohighlight">GObject
+╰── GInitiallyUnowned
+    ╰── GtkWidget
+        ╰── GtkContainer
+            ╰── GtkTreeView
+</code></pre>
+
+<p><code>GtkTreeView</code> &mdash; член семейства виджетов, создающий представление данных в виде дерева или списка наподобие тех, которые вы можете встретить в электронной таблице или файловом менеджере. С помощью виджета <code>GtkTreeView</code> можно создать сложные представления данных, смешивая текст, растровую графику и даже данные вводимые с помощью виджетов <code>GtkEntry</code>, и т. д.</p>
+
+<p>Самый быстрый способ испытания <code>GtkTreeView</code> &mdash; запуск приложения <code>gtk3-demo</code>, которое поставляется вместе с GTK+ 3. Демонстрационное приложение показывает возможности всех виджетов GTK+ 3, включая <code>GtkTreeView</code> (рис. 10.1)</p>
+
+<figure>
+<img src="images/gtk3-demo_TreeStore.png.png" alt="Рис. 10.1. Пример Tree Store в программе gtk3-demo" />
+<figcaption>Рис. 10.1. Пример Tree Store в программе gtk3-demo</figcaption>
+</figure>
+
+<p>Семейство <code>GtkTreeView</code> состоит из четырех компонентов:</p>
+
+<ul>
+<li><code>GtkTreeView</code> &mdash; отображение дерева или списка;</li>
+<li><code>GtkTreeViewColumn</code> &mdash; представление столбца или дерева;</li>
+<li><code>GtkCellRenderer</code> &mdash; управление отображаемыми ячейками;</li>
+<li><code>GtkTreeModel</code> &mdash; представление данных дерева и списка.</li>
+</ul>
+
+<p>Первые три компонента формируют так называемое <em>Представление</em>, а последний &mdash; <em>Модель</em>. Концепция разделения <em>Представление</em> и <em>Модели</em> (часто называемая проектным шаблоном <em>модель/Представление/Действие</em> (Model/View/Controller или сокращенно MVC) не свойственна GTK+, но проектированию уделяется все большее и большее внимание на всех этапах программирования.</p>
+
+<p>Ключевое достоинство проектного шаблона MVC заключается в возможности одновременной визуализации данных в виде разных представлений без ненужного их дублирования. Например, текстовые редакторы могу иметь две разные панели и редактировать разные фрагменты документа без хранения в памяти двух копий документа.</p>
+
+<p>Шаблон MVC также очень популярен в Web-программировании, поскольку облегчает создание Web-сайтов, которые визуализируются в мобильных или WAP-обозревателях не так, как в настольных, просто за счет наличия отдельных компонентов <em>Представление</em>, оптимизированных для Web-обозревателя каждого типа. Вы также можете отделить логику сбора данных, например, запросов к базе данных, от логики пользовательского интерфейса.</p>
+
+<p>Мы начнем с рассмотрения компонента <em>модель</em>, представленного в GTK+ двумя типами. Объект типа <code>GtkTreeStore</code> содержит многоуровневые данные, например, иерархию каталогов, а объект <code>GtkListStore</code> предназначен для простых данных.</p>
+
+<p>Для создания объекта <code>GtkTreeStore</code> в функцию передаётся количество столбцов, за которыми следуют типы всех столбцов:</p>
+
+<pre><code class="C">GtkWidget *store = gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_BOOLEAN);
+</code></pre>
+
+<p>Чтение, вставка, редактирование и удаление из модели выполняется с помощью структур <code>GtkTreeIter</code>. Эти структуры итераторов указывают на узлы дерева (или строки списка) и помогают находить фрагменты структур данных потенциально очень большого объема, а также манипулировать ими. Есть несколько вызовов API для получения объекта-итератора для разных точек дерева, но мы рассмотрим простейшую функцию <code>gtk_tree_store_append()</code>.</p>
+
+<p>Перед тем как вставлять какие-либо данные в модель дерева, вам нужно получить итератор, указывающий на новую строку. Функция <code>gtk_tree_store_append()</code> заполняет объект <code>GtkTreeIter</code>, который представляет новую строку в дереве, как строку верхнего уровня (если вы передаете значение NULL в третьем аргументе), так и подчиненную или дочернюю строку (если вы передаете итератор главного или родительской строки):</p>
+
+<pre><code class="C">GtkTreeIter iter;
+gtk_tree_store_append(store, &amp;iter, NULL);
+</code></pre>
+
+<p>Получив итератор, вы можете заполнять строку с помощью функции <code>gtk_tree_store_set()</code>:</p>
+
+<pre><code class="C">gtk_tree_store_set(store, &amp;iter,
+                   0, &quot;Def Leppard&quot;,
+                   1, 1987,
+                   2, TRUE,
+                   -1);
+</code></pre>
+
+<p>Номер столбца и данные передаются парами, которые завершаются <code>-1</code>. Позже вы примените тип <code>enum</code> для того, чтобы сделать номера столбцов более информативными.</p>
+
+<p>Для того чтобы добавить ветвь к данной строке (дочернюю строку), вам нужен только итератор для дочерней строки, который вы получаете, вызвав снова функцию <code>gtk_tree_store_append()</code> и указав на этот раз в качестве параметра строку верхнего уровня:</p>
+
+<pre><code>GtkTreeIter child;
+gtk_tree_store_append(store, &amp;child, &amp;iter);
+
+</code></pre>
+
+<p>Дополнительную информацию об объектах <code>GtkTreeStore</code> и функциях объекта <code>GtkListStore</code> см. в документации API:</p>
+
+<ul>
+<li><a href="https://developer.gnome.org/gtk3/stable/GtkTreeStore.html">GtkTreeStore: GTK+ 3 Reference Manual</a></li>
+<li><a href="https://developer.gnome.org/gtk3/stable/GtkListStore.html">GtkListStore: GTK+ 3 Reference Manual</a></li>
+</ul>
+
+<p>Пойдём дальше и рассмотрим компонент <em>Представление</em> типа <code>GtkTreeView</code>.</p>
+
+<p>Создание объекта <code>GtkTreeView</code> сама простота: только передайте в конструктор в качестве параметра модель типа <code>GtkTreeStore</code> или <code>GtkListStore</code>:</p>
+
+<pre><code>GtkWidget *view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+</code></pre>
+
+<p>Сейчас самое время настроить виджет для отображения данных именно так, как вы хотите. Для каждого столбца следует определить &#8217;GtkCellRenderer` и источник данных. Можно выбрать, например, визуализацию только определенных столбцов данных или изменить порядок вывода столбцов.</p>
+
+<p>&#8217;GtkCellRenderer` &mdash; это объект, отвечающий за прорисовку каждой ячейки на экране, и существует три подкласса, имеющие дело с текстовыми ячейками, ячейками пиксельной графики и ячейками кнопок-выключателей:</p>
+
+<ul>
+<li><code>GtkCellRendererText</code>;</li>
+<li><code>GtkCellRendererPixBuf</code>;</li>
+<li><code>GtkCellRendererToggle</code>.</li>
+</ul>
+
+<p>В вашем <em>Представлении</em> будет применено текстовое представление ячеек, <code>GtkCellRendererText</code>.</p>
+
+<pre><code class="C">GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+
+gtk_tree_view_insert_column_with_attributes(
+    GTK_TREE_VIEW (treeview),
+    0, &quot;This is the column title&quot;, renderer,
+    &quot;text&quot;, COLUMN_ITEM_NUMBER,
+    NULL);
+</code></pre>
+
+<p>Вы создаете представление ячейки и передаете его в функцию вставки столбца. Эта функция позволяет сразу задать свойства <code>GtkCellRendererText</code>, передавая заканчивающиеся значением <code>NULL</code> пары &#8220;ключ/значение&#8221;. В качестве параметров указаны представление дерева, номер столбца, заголовок столбца, представление ячейки и его свойства. В приведенном примере вы задаёте атрибут &#8220;text&#8221;, передав номер других атрибутов, включая подчеркивание, шрифт, размер и т. д.</p>
+
+<p>В примере далее, выполнив необходимые шаги, вы увидите, как это работает на практике.</p>
+
+<h3 id="Пример:использованиевиджетаgtktreeview">Пример: использование виджета GtkTreeView</h3>
+
+<p>Введите следующий программный код и назовите файл <code>gtk_tree.c</code>.</p>
+
+<ol>
+<li>
+<p>Примените тип <code>enum</code> для обозначения столбцов, чтобы можно было ссылаться на них по именам. Общее количество столбцов удобно обозначить как <code>N_COLUMNS</code>:</p>
+<pre><code class="C">#include &lt;gtk/gtk.h&gt;
+
+enum {
+    COLUMN_TITLE,
+    COLUMN_ARTIST,
+    COLUMN_CATALOGUE,
+    N_COLUMNS
+};
+
+void closeApp(GtkWidget *window, gpointer data)
+{
+    gtk_main_quit();
+}
+
+int main(int argc, char *argv[])
+{
+    GtkWidget *window;
+    GtkTreeStore *store;
+    GtkWidget *view;
+    GtkTreeIter parent_iter, child_iter;
+    GtkCellRenderer *renderer;
+
+
+    gtk_init(&amp;argc, &amp;argv);
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), &quot;Tree&quot;);
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+
+    g_signal_connect(G_OBJECT(window), &quot;destroy&quot;, G_CALLBACK(closeApp), NULL);
+</code></pre>
+</li>
+<li>
+<p>Далее вы создаёте модель дерева, передавая количество столбцов и тип каждого из них:</p>
+<pre><code class="C">    store = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+</code></pre>
+</li>
+<li>
+<p>Следующий этап &mdash; вставка родительской и дочерней строк в дерево:</p>
+<pre><code class="C">    gtk_tree_store_append(store, &amp;parent_iter, NULL);
+    gtk_tree_store_set(store, &amp;parent_iter,
+                       COLUMN_TITLE, &quot;Dark Side of the Moon&quot;,
+                       COLUMN_ARTIST, &quot;Pink Floyd&quot;,
+                       COLUMN_CATALOGUE, &quot;B000024D4P&quot;,
+                       -1);
+    gtk_tree_store_append(store, &amp;child_iter, &amp;parent_iter);
+    gtk_tree_store_set(store, &amp;child_iter, COLUMN_TITLE, &quot;Speak to Me&quot;, -1);
+
+    view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+</code></pre>
+</li>
+<li>
+<p>Наконец, добавьте столбцы в представление, задавая источники данных для них и заголовки:</p>
+<pre><code class="C">    renderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                                COLUMN_TITLE,
+                                                &quot;Title&quot;, renderer,
+                                                &quot;text&quot;, COLUMN_TITLE,
+                                                NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                                COLUMN_ARTIST,
+                                                &quot;Catalogue&quot;, renderer,
+                                                &quot;text&quot;, COLUMN_ARTIST,
+                                                NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                                COLUMN_CATALOGUE,
+                                                &quot;Catalogue&quot;, renderer,
+                                                &quot;text&quot;, COLUMN_CATALOGUE,
+                                                NULL);
+
+    gtk_container_add(GTK_CONTAINER(window), view);
+
+    gtk_widget_show_all(window);
+
+    gtk_main();
+
+    return 0;
+}
+</code></pre>
+</li>
+</ol>
+
+<hr />
+
+<p>Назад: <a href="09-widgets-gtkbutton.html">Виджеты класса GtkButton</a></p>
+
+<p>Далее: </p>
+
+<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
+
+
+
+    </div>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/bootstrap.js"></script>
+  </body>
+</html>
