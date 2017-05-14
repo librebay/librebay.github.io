@@ -8543,7 +8543,7 @@ struct GtkWindowClass {
 
         <h3>enum GtkWindowType</h3>
 
-        <p>A <a class="link" href="GtkWindow.html" title="GtkWindow"><span class="type">GtkWindow</span></a> can be one of these types. Most things you’d consider a “window” should have type <a class="link" href="GtkWindow.html#GTK-WINDOW-TOPLEVEL:CAPS"><span class="type">GTK_WINDOW_TOPLEVEL</span></a>; windows with this type are managed by the window manager and have a frame by default (call <a class="link" href="GtkWindow.html#gtk-window-set-decorated" title="gtk_window_set_decorated&nbsp;()"><code class="function">gtk_window_set_decorated()</code></a> to toggle the frame). Windows with type <a class="link" href="GtkWindow.html#GTK-WINDOW-POPUP:CAPS"><span class="type">GTK_WINDOW_POPUP</span></a> are ignored by the window manager; window manager keybindings won’t work on them, the window manager won’t decorate the window with a frame, many GTK+ features that rely on the window manager will not work (e.g. resize grips and maximization/minimization). <a class="link" href="GtkWindow.html#GTK-WINDOW-POPUP:CAPS"><span class="type">GTK_WINDOW_POPUP</span></a> is used to implement widgets such as <a class="link" href="GtkMenu.html" title="GtkMenu"><span class="type">GtkMenu</span></a> or tooltips that you normally don’t think of as windows per se. Nearly all windows should be <a class="link" href="GtkWindow.html#GTK-WINDOW-TOPLEVEL:CAPS"><span class="type">GTK_WINDOW_TOPLEVEL</span></a>. In particular, do not use <a class="link" href="GtkWindow.html#GTK-WINDOW-POPUP:CAPS"><span class="type">GTK_WINDOW_POPUP</span></a> just to turn off the window borders; use <a class="link" href="GtkWindow.html#gtk-window-set-decorated" title="gtk_window_set_decorated&nbsp;()"><code class="function">gtk_window_set_decorated()</code></a> for that.</p>
+        <p><a class="link" href="GtkWindow.html" title="GtkWindow"><span class="type">GtkWindow</span></a> может быть одним из этих типов. Большинство вещей рассматриваемых вами как “window” должны иметь тип <a class="link" href="GtkWindow.html#GTK-WINDOW-TOPLEVEL:CAPS"><span class="type">GTK_WINDOW_TOPLEVEL</span></a>; окна этого типа управляются менеджером окон и имеют рамку вокруг окна (frame) по умолчанию (вызывайте <a class="link" href="GtkWindow.html#gtk-window-set-decorated" title="gtk_window_set_decorated&nbsp;()"><code class="function">gtk_window_set_decorated()</code></a>, чтобы включить или отключить рамку). Окна с типом <a class="link" href="GtkWindow.html#GTK-WINDOW-POPUP:CAPS"><span class="type">GTK_WINDOW_POPUP</span></a> игнорируются менеджером окон; сочетания клавиш менеджера окон не будут действовать на них; оконный менеджер не будет отделывать окна рамкой; многие возможности GTK+, которые зависят от менеджера окон не будут работать (например, изменение размера и максимизация/минимизация окна). <a class="link" href="GtkWindow.html#GTK-WINDOW-POPUP:CAPS"><span class="type">GTK_WINDOW_POPUP</span></a> испоьлзуется для реализации виджетов, таких как <a class="link" href="GtkMenu.html" title="GtkMenu"><span class="type">GtkMenu</span></a> или подсказки, которые не являются окнами в нормальном понимании этого термина. Почти все окна должны быть <a class="link" href="GtkWindow.html#GTK-WINDOW-TOPLEVEL:CAPS"><span class="type">GTK_WINDOW_TOPLEVEL</span></a>. В частности, не используйте <a class="link" href="GtkWindow.html#GTK-WINDOW-POPUP:CAPS"><span class="type">GTK_WINDOW_POPUP</span></a> только для отключения границ окна; для этого имеется функция <a class="link" href="GtkWindow.html#gtk-window-set-decorated" title="gtk_window_set_decorated&nbsp;()"><code class="function">gtk_window_set_decorated()</code></a>.</p>
 
         <div class="refsect3">
           <a name="GtkWindowType.members" id="GtkWindowType.members"></a>
@@ -8565,7 +8565,7 @@ struct GtkWindowClass {
                   </td>
 
                   <td class="enum_member_description">
-                    <p>A regular window, such as a dialog.</p>
+                    <p>Обычное окно, такое как главное окно или диалог.</p>
                   </td>
 
                   <td class="enum_member_annotations">&nbsp;</td>
@@ -8577,7 +8577,7 @@ struct GtkWindowClass {
                   </td>
 
                   <td class="enum_member_description">
-                    <p>A special window such as a tooltip.</p>
+                    <p>Специальное окно, такое как подсказка.</p>
                   </td>
 
                   <td class="enum_member_annotations">&nbsp;</td>
