@@ -1,181 +1,254 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Building applications: GTK+ 3 Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
-<link rel="home" href="index.html" title="GTK+ 3 Reference Manual">
-<link rel="up" href="gtk-getting-started.html" title="Getting Started with GTK+">
-<link rel="prev" href="ch01s03.html" title="Building user interfaces">
-<link rel="next" href="ch01s05.html" title="Custom Drawing">
-<meta name="generator" content="GTK-Doc V1.25 (XML mode)">
-<link rel="stylesheet" href="style.css" type="text/css">
+  <meta name="generator" content="HTML Tidy for Linux (vers 25 March 2009), see www.w3.org">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <title>Building applications: GTK+ 3 Reference Manual</title>
+  <meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+  <link rel="home" href="index.html" title="GTK+ 3 Reference Manual">
+  <link rel="up" href="gtk-getting-started.html" title="Getting Started with GTK+">
+  <link rel="prev" href="ch01s03.html" title="Building user interfaces">
+  <link rel="next" href="ch01s05.html" title="Custom Drawing">
+  <meta name="generator" content="GTK-Doc V1.25 (XML mode)">
+  <link rel="stylesheet" href="style.css" type="text/css">
 </head>
+
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
-<td width="100%" align="left" class="shortcuts"></td>
-<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
-<td><a accesskey="u" href="gtk-getting-started.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
-<td><a accesskey="p" href="ch01s03.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
-<td><a accesskey="n" href="ch01s05.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
-</tr></table>
-<div class="section">
-<div class="titlepage"><div><div><h2 class="title" style="clear: both">
-<a name="id-1.2.3.12"></a>Building applications</h2></div></div></div>
-<p>An application consists of a number of files:
-    </p>
-<div class="variablelist"><table border="0" class="variablelist">
-<colgroup>
-<col align="left" valign="top">
-<col>
-</colgroup>
-<tbody>
-<tr>
-<td><p><span class="term">The binary</span></p></td>
-<td>This gets installed in <code class="filename">/usr/bin</code>.</td>
-</tr>
-<tr>
-<td><p><span class="term">A desktop file</span></p></td>
-<td>The desktop file provides important information about the application to the desktop shell, such as its name, icon, D-Bus name, commandline to launch it, etc. It is installed in <code class="filename">/usr/share/applications</code>.</td>
-</tr>
-<tr>
-<td><p><span class="term">An icon</span></p></td>
-<td>The icon gets installed in <code class="filename">/usr/share/icons/hicolor/48x48/apps</code>, where it will be found regardless of the current theme.</td>
-</tr>
-<tr>
-<td><p><span class="term">A settings schema</span></p></td>
-<td>If the application uses GSettings, it will install its schema
-          in <code class="filename">/usr/share/glib-2.0/schemas</code>, so that tools
-          like dconf-editor can find it.</td>
-</tr>
-<tr>
-<td><p><span class="term">Other resources</span></p></td>
-<td>Other files, such as GtkBuilder ui files, are best loaded from
-          resources stored in the application binary itself. This eliminates the
-          need for most of the files that would traditionally be installed in
-          an application-specific location in <code class="filename">/usr/share</code>.</td>
-</tr>
-</tbody>
-</table></div>
-<p>
-    </p>
-<p>GTK+ includes application support that is built on top of
-    <a href="/usr/share/gtk-doc/html/gio/GApplication.html#GApplication-struct"><span class="type">GApplication</span></a>. In this tutorial we'll build a simple application by
-    starting from scratch, adding more and more pieces over time. Along
-    the way, we'll learn about <a class="link" href="GtkApplication.html" title="GtkApplication"><span class="type">GtkApplication</span></a>, templates, resources,
-    application menus, settings, <a class="link" href="GtkHeaderBar.html" title="GtkHeaderBar"><span class="type">GtkHeaderBar</span></a>, <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a>, <a class="link" href="GtkSearchBar.html" title="GtkSearchBar"><span class="type">GtkSearchBar</span></a>,
-    <a class="link" href="GtkListBox.html" title="GtkListBox"><span class="type">GtkListBox</span></a>, and more.</p>
-<p>The full, buildable sources for these examples can be found
-    in the examples/ directory of the GTK+ source distribution, or
-    <a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples" target="_top">online</a> in the GTK+ git repository.
-    You can build each example separately by using make with the <code class="filename">Makefile.example</code>
-    file. For more information, see the <code class="filename">README</code> included in the
-    examples directory.</p>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.5"></a>A trivial application</h3></div></div></div>
-<p>When using <a class="link" href="GtkApplication.html" title="GtkApplication"><span class="type">GtkApplication</span></a>, the <code class="function">main()</code> function can be very
-      simple. We just call <a href="/usr/share/gtk-doc/html/gio/GApplication.html#g-application-run"><code class="function">g_application_run()</code></a> and give it an instance
-      of our application class.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5">
+    <tr valign="middle">
+      <td width="100%" align="left" class="shortcuts"></td>
 
-<p>All the application logic is in the application class, which
-      is a subclass of <a class="link" href="GtkApplication.html" title="GtkApplication"><span class="type">GtkApplication</span></a>. Our example does not yet have any
-      interesting functionality. All it does is open a window when it is
-      activated without arguments, and open the files it is given, if it
-      is started with arguments.</p>
-<p>To handle these two cases, we override the <code class="function">activate()</code> vfunc,
-      which gets called when the application is launched without commandline
-      arguments, and the <code class="function">open()</code> vfunc, which gets called when the application
-      is launched with commandline arguments.</p>
-<p>To learn more about GApplication entry points, consult the
-      GIO <a class="ulink" href="https://developer.gnome.org/gio/2.36/GApplication.html#GApplication.description" target="_top">documentation</a>.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+      <td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
 
-<p>Another important class that is part of the application support
-      in GTK+ is <a class="link" href="GtkApplicationWindow.html" title="GtkApplicationWindow"><span class="type">GtkApplicationWindow</span></a>. It is typically subclassed as well.
-      Our subclass does not do anything yet, so we will just get an empty
-      window.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+      <td><a accesskey="u" href="gtk-getting-started.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
 
-<p>As part of the initial setup of our application, we also
-      create an icon and a desktop file.</p>
-<div class="informalfigure"><div class="mediaobject"><img src="exampleapp.png"></div></div>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+      <td><a accesskey="p" href="ch01s03.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
 
-<p>Note that <em class="replaceable"><code>@bindir@</code></em> needs to be replaced
-      with the actual path to the binary before this desktop file can be used.</p>
-<p>Here is what we've achieved so far:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app1.png"></div></div>
-<p>This does not look very impressive yet, but our application
-      is already presenting itself on the session bus, it has single-instance
-      semantics, and it accepts files as commandline arguments.</p>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.6"></a>Populating the window</h3></div></div></div>
-<p>In this step, we use a <a class="link" href="GtkBuilder.html" title="GtkBuilder"><span class="type">GtkBuilder</span></a> template to associate a
-      <a class="link" href="GtkBuilder.html" title="GtkBuilder"><span class="type">GtkBuilder</span></a> ui file with our application window class.</p>
-<p>Our simple ui file puts a <a class="link" href="GtkHeaderBar.html" title="GtkHeaderBar"><span class="type">GtkHeaderBar</span></a> on top of a <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a>
-      widget. The header bar contains a <a class="link" href="GtkStackSwitcher.html" title="GtkStackSwitcher"><span class="type">GtkStackSwitcher</span></a>, which is a
-      standalone widget to show a row of 'tabs' for the pages of a <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a>.
-      </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
+      <td><a accesskey="n" href="ch01s05.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+    </tr>
   </table>
-</div>
 
-<p>To make use of this file in our application, we revisit
-      our <a class="link" href="GtkApplicationWindow.html" title="GtkApplicationWindow"><span class="type">GtkApplicationWindow</span></a> subclass, and call
-      <a class="link" href="GtkWidget.html#gtk-widget-class-set-template-from-resource" title="gtk_widget_class_set_template_from_resource ()"><code class="function">gtk_widget_class_set_template_from_resource()</code></a> from the class init
-      function to set the ui file as template for this class. We also
-      add a call to <a class="link" href="GtkWidget.html#gtk-widget-init-template" title="gtk_widget_init_template ()"><code class="function">gtk_widget_init_template()</code></a> in the instance init
-      function to instantiate the template for each instance of our
-      class.</p>
-<div class="informalexample">
-<pre class="programlisting">
+  <div class="section">
+    <div class="titlepage">
+      <div>
+        <div>
+          <h2 class="title" style="clear: both"><a name="id-1.2.3.12" id="id-1.2.3.12"></a>Building applications</h2>
+        </div>
+      </div>
+    </div>
+
+    <p>An application consists of a number of files:</p>
+
+    <div class="variablelist">
+      <table border="0" class="variablelist">
+        <colgroup>
+          <col align="left" valign="top">
+          <col>
+        </colgroup>
+
+        <tbody>
+          <tr>
+            <td>
+              <p><span class="term">The binary</span></p>
+            </td>
+
+            <td>This gets installed in <code class="filename">/usr/bin</code>.</td>
+          </tr>
+
+          <tr>
+            <td>
+              <p><span class="term">A desktop file</span></p>
+            </td>
+
+            <td>The desktop file provides important information about the application to the desktop shell, such as its name, icon, D-Bus name, commandline to launch it, etc. It is installed in <code class="filename">/usr/share/applications</code>.</td>
+          </tr>
+
+          <tr>
+            <td>
+              <p><span class="term">An icon</span></p>
+            </td>
+
+            <td>The icon gets installed in <code class="filename">/usr/share/icons/hicolor/48x48/apps</code>, where it will be found regardless of the current theme.</td>
+          </tr>
+
+          <tr>
+            <td>
+              <p><span class="term">A settings schema</span></p>
+            </td>
+
+            <td>If the application uses GSettings, it will install its schema in <code class="filename">/usr/share/glib-2.0/schemas</code>, so that tools like dconf-editor can find it.</td>
+          </tr>
+
+          <tr>
+            <td>
+              <p><span class="term">Other resources</span></p>
+            </td>
+
+            <td>Other files, such as GtkBuilder ui files, are best loaded from resources stored in the application binary itself. This eliminates the need for most of the files that would traditionally be installed in an application-specific location in <code class="filename">/usr/share</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>GTK+ includes application support that is built on top of <a href="/usr/share/gtk-doc/html/gio/GApplication.html#GApplication-struct"><span class="type">GApplication</span></a>. In this tutorial we'll build a simple application by starting from scratch, adding more and more pieces over time. Along the way, we'll learn about <a class="link" href="GtkApplication.html" title="GtkApplication"><span class="type">GtkApplication</span></a>, templates, resources, application menus, settings, <a class="link" href="GtkHeaderBar.html" title="GtkHeaderBar"><span class="type">GtkHeaderBar</span></a>, <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a>, <a class="link" href="GtkSearchBar.html" title="GtkSearchBar"><span class="type">GtkSearchBar</span></a>, <a class="link" href="GtkListBox.html" title="GtkListBox"><span class="type">GtkListBox</span></a>, and more.</p>
+
+    <p>The full, buildable sources for these examples can be found in the examples/ directory of the GTK+ source distribution, or <a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples" target="_top">online</a> in the GTK+ git repository. You can build each example separately by using make with the <code class="filename">Makefile.example</code> file. For more information, see the <code class="filename">README</code> included in the examples directory.</p>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.5" id="id-1.2.3.12.5"></a>A trivial application</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>When using <a class="link" href="GtkApplication.html" title="GtkApplication"><span class="type">GtkApplication</span></a>, the <code class="function">main()</code> function can be very simple. We just call <a href="/usr/share/gtk-doc/html/gio/GApplication.html#g-application-run"><code class="function">g_application_run()</code></a> and give it an instance of our application class.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>All the application logic is in the application class, which is a subclass of <a class="link" href="GtkApplication.html" title="GtkApplication"><span class="type">GtkApplication</span></a>. Our example does not yet have any interesting functionality. All it does is open a window when it is activated without arguments, and open the files it is given, if it is started with arguments.</p>
+
+      <p>To handle these two cases, we override the <code class="function">activate()</code> vfunc, which gets called when the application is launched without commandline arguments, and the <code class="function">open()</code> vfunc, which gets called when the application is launched with commandline arguments.</p>
+
+      <p>To learn more about GApplication entry points, consult the GIO <a class="ulink" href="https://developer.gnome.org/gio/2.36/GApplication.html#GApplication.description" target="_top">documentation</a>.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Another important class that is part of the application support in GTK+ is <a class="link" href="GtkApplicationWindow.html" title="GtkApplicationWindow"><span class="type">GtkApplicationWindow</span></a>. It is typically subclassed as well. Our subclass does not do anything yet, so we will just get an empty window.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>As part of the initial setup of our application, we also create an icon and a desktop file.</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="exampleapp.png"></div>
+      </div>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Note that <em class="replaceable"><code>@bindir@</code></em> needs to be replaced with the actual path to the binary before this desktop file can be used.</p>
+
+      <p>Here is what we've achieved so far:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app1.png"></div>
+      </div>
+
+      <p>This does not look very impressive yet, but our application is already presenting itself on the session bus, it has single-instance semantics, and it accepts files as commandline arguments.</p>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.6" id="id-1.2.3.12.6"></a>Populating the window</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>In this step, we use a <a class="link" href="GtkBuilder.html" title="GtkBuilder"><span class="type">GtkBuilder</span></a> template to associate a <a class="link" href="GtkBuilder.html" title="GtkBuilder"><span class="type">GtkBuilder</span></a> ui file with our application window class.</p>
+
+      <p>Our simple ui file puts a <a class="link" href="GtkHeaderBar.html" title="GtkHeaderBar"><span class="type">GtkHeaderBar</span></a> on top of a <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a> widget. The header bar contains a <a class="link" href="GtkStackSwitcher.html" title="GtkStackSwitcher"><span class="type">GtkStackSwitcher</span></a>, which is a standalone widget to show a row of 'tabs' for the pages of a <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a>.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>To make use of this file in our application, we revisit our <a class="link" href="GtkApplicationWindow.html" title="GtkApplicationWindow"><span class="type">GtkApplicationWindow</span></a> subclass, and call <a class="link" href="GtkWidget.html#gtk-widget-class-set-template-from-resource" title="gtk_widget_class_set_template_from_resource&nbsp;()"><code class="function">gtk_widget_class_set_template_from_resource()</code></a> from the class init function to set the ui file as template for this class. We also add a call to <a class="link" href="GtkWidget.html#gtk-widget-init-template" title="gtk_widget_init_template&nbsp;()"><code class="function">gtk_widget_init_template()</code></a> in the instance init function to instantiate the template for each instance of our class.</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
  ...
 
 static void
@@ -192,47 +265,62 @@ example_app_window_class_init (ExampleAppWindowClass *class)
 }
 
  ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application2/exampleappwin.c" target="_top">full source</a>)</p>
-</div>
-<p>You may have noticed that we used the <code class="literal">_from_resource()</code> variant
-      of the function that sets a template. Now we need to use GLib's resource
-      functionality to include the ui file in the binary. This is commonly
-      done by listing all resources in a .gresource.xml file, such as this:
-      </p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>This file has to be converted into a C source file that will be
-      compiled and linked into the application together with the other source
-      files. To do so, we use the glib-compile-resources utility:</p>
-<pre class="screen">
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application2/exampleappwin.c" target="_top">full source</a>)</p>
+      </div>
+
+      <p>You may have noticed that we used the <code class="literal">_from_resource()</code> variant of the function that sets a template. Now we need to use GLib's resource functionality to include the ui file in the binary. This is commonly done by listing all resources in a .gresource.xml file, such as this:</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>This file has to be converted into a C source file that will be compiled and linked into the application together with the other source files. To do so, we use the glib-compile-resources utility:</p>
+      <pre class="screen">
       glib-compile-resources exampleapp.gresource.xml --target=resources.c --generate-source
-      </pre>
-<p>Our application now looks like this:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app2.png"></div></div>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.7"></a>Opening files</h3></div></div></div>
-<p>In this step, we make our application show the content of
-      all the files that it is given on the commandline.</p>
-<p>To this end, we add a private struct to our application
-      window subclass and keep a reference to the <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a> there.
-      The <a class="link" href="GtkWidget.html#gtk-widget-class-bind-template-child-private" title="gtk_widget_class_bind_template_child_private()"><code class="function">gtk_widget_class_bind_template_child_private()</code></a> function
-      arranges things so that after instantiating the template, the
-      <em class="parameter"><code>stack</code></em> member of the private struct will point to the widget of
-      the same name from the template.</p>
-<div class="informalexample">
-<pre class="programlisting">
+      
+</pre>
+
+      <p>Our application now looks like this:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app2.png"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.7" id="id-1.2.3.12.7"></a>Opening files</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>In this step, we make our application show the content of all the files that it is given on the commandline.</p>
+
+      <p>To this end, we add a private struct to our application window subclass and keep a reference to the <a class="link" href="GtkStack.html" title="GtkStack"><span class="type">GtkStack</span></a> there. The <a class="link" href="GtkWidget.html#gtk-widget-class-bind-template-child-private" title="gtk_widget_class_bind_template_child_private()"><code class="function">gtk_widget_class_bind_template_child_private()</code></a> function arranges things so that after instantiating the template, the <em class="parameter"><code>stack</code></em> member of the private struct will point to the widget of the same name from the template.</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 struct _ExampleAppWindowPrivate
@@ -253,14 +341,16 @@ example_app_window_class_init (ExampleAppWindowClass *class)
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application3/exampleappwin.c" target="_top">full source</a>)</p>
-</div>
-<p>Now we revisit the <code class="function">example_app_window_open()</code> function that
-      is called for each commandline argument, and construct a GtkTextView
-      that we then add as a page to the stack:</p>
-<div class="informalexample">
-<pre class="programlisting">
+        
+</pre>
+
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application3/exampleappwin.c" target="_top">full source</a>)</p>
+      </div>
+
+      <p>Now we revisit the <code class="function">example_app_window_open()</code> function that is called for each commandline argument, and construct a GtkTextView that we then add as a page to the stack:</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 void
@@ -300,45 +390,60 @@ example_app_window_open (ExampleAppWindow *win,
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application3/exampleappwin.c" target="_top">full source</a>)</p>
-</div>
-<p>Note that we did not have to touch the stack switcher
-      at all. It gets all its information from the stack that it
-      belongs to. Here, we are passing the label to show for each
-      file as the last argument to the <a class="link" href="GtkStack.html#gtk-stack-add-titled" title="gtk_stack_add_titled ()"><code class="function">gtk_stack_add_titled()</code></a>
-      function.</p>
-<p>Our application is beginning to take shape:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app3.png"></div></div>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.8"></a>An application menu</h3></div></div></div>
-<p>An application menu is shown by GNOME shell at the top of the
-      screen. It is meant to collect infrequently used actions that affect
-      the whole application.</p>
-<p>Just like the window template, we specify our application menu
-      in a ui file, and add it as a resource to our binary.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>To associate the app menu with the application, we have to call
-      <a class="link" href="GtkApplication.html#gtk-application-set-app-menu" title="gtk_application_set_app_menu ()"><code class="function">gtk_application_set_app_menu()</code></a>. Since app menus work by activating
-      <a href="/usr/share/gtk-doc/html/gio/GAction.html#GAction-struct"><span class="type">GActions</span></a>, we also have to add a suitable set of actions to our
-      application.</p>
-<p>Both of these tasks are best done in the <code class="function">startup()</code> vfunc,
-      which is guaranteed to be called once for each primary application
-      instance:</p>
-<div class="informalexample">
-<pre class="programlisting">
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application3/exampleappwin.c" target="_top">full source</a>)</p>
+      </div>
+
+      <p>Note that we did not have to touch the stack switcher at all. It gets all its information from the stack that it belongs to. Here, we are passing the label to show for each file as the last argument to the <a class="link" href="GtkStack.html#gtk-stack-add-titled" title="gtk_stack_add_titled&nbsp;()"><code class="function">gtk_stack_add_titled()</code></a> function.</p>
+
+      <p>Our application is beginning to take shape:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app3.png"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.8" id="id-1.2.3.12.8"></a>An application menu</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>An application menu is shown by GNOME shell at the top of the screen. It is meant to collect infrequently used actions that affect the whole application.</p>
+
+      <p>Just like the window template, we specify our application menu in a ui file, and add it as a resource to our binary.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>To associate the app menu with the application, we have to call <a class="link" href="GtkApplication.html#gtk-application-set-app-menu" title="gtk_application_set_app_menu&nbsp;()"><code class="function">gtk_application_set_app_menu()</code></a>. Since app menus work by activating <a href="/usr/share/gtk-doc/html/gio/GAction.html#GAction-struct"><span class="type">GActions</span></a>, we also have to add a suitable set of actions to our application.</p>
+
+      <p>Both of these tasks are best done in the <code class="function">startup()</code> vfunc, which is guaranteed to be called once for each primary application instance:</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 static void
@@ -392,48 +497,60 @@ example_app_class_init (ExampleAppClass *class)
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application4/exampleapp.c" target="_top">full source</a>)</p>
-</div>
-<p>Our preferences menu item does not do anything yet,
-      but the Quit menu item is fully functional. Note that it
-      can also be activated by the usual Ctrl-Q shortcut. The
-      shortcut was added with <a class="link" href="GtkApplication.html#gtk-application-set-accels-for-action" title="gtk_application_set_accels_for_action ()"><code class="function">gtk_application_set_accels_for_action()</code></a>.
-      </p>
-<p>The application menu looks like this:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app4.png"></div></div>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.9"></a>A preference dialog</h3></div></div></div>
-<p>A typical application will have a some preferences that
-      should be remembered from one run to the next. Even for our
-      simple example application, we may want to change the font
-      that is used for the content.</p>
-<p>We are going to use GSettings to store our preferences.
-      GSettings requires a schema that describes our settings:</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>Before we can make use of this schema in our application,
-      we need to compile it into the binary form that GSettings
-      expects. GIO provides <a class="ulink" href="https://developer.gnome.org/gio/2.36/ch31s06.html" target="_top">macros</a>
-      to do this in autotools-based projects.</p>
-<p>Next, we need to connect our settings to the widgets
-      that they are supposed to control. One convenient way to do
-      this is to use GSettings bind functionality to bind settings
-      keys to object properties, as we do here for the transition
-      setting.</p>
-<div class="informalexample">
-<pre class="programlisting">
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application4/exampleapp.c" target="_top">full source</a>)</p>
+      </div>
+
+      <p>Our preferences menu item does not do anything yet, but the Quit menu item is fully functional. Note that it can also be activated by the usual Ctrl-Q shortcut. The shortcut was added with <a class="link" href="GtkApplication.html#gtk-application-set-accels-for-action" title="gtk_application_set_accels_for_action&nbsp;()"><code class="function">gtk_application_set_accels_for_action()</code></a>.</p>
+
+      <p>The application menu looks like this:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app4.png"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.9" id="id-1.2.3.12.9"></a>A preference dialog</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>A typical application will have a some preferences that should be remembered from one run to the next. Even for our simple example application, we may want to change the font that is used for the content.</p>
+
+      <p>We are going to use GSettings to store our preferences. GSettings requires a schema that describes our settings:</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Before we can make use of this schema in our application, we need to compile it into the binary form that GSettings expects. GIO provides <a class="ulink" href="https://developer.gnome.org/gio/2.36/ch31s06.html" target="_top">macros</a> to do this in autotools-based projects.</p>
+
+      <p>Next, we need to connect our settings to the widgets that they are supposed to control. One convenient way to do this is to use GSettings bind functionality to bind settings keys to object properties, as we do here for the transition setting.</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 static void
@@ -451,47 +568,64 @@ example_app_window_init (ExampleAppWindow *win)
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application5/exampleappwin.c" target="_top">full source</a>)</p>
-</div>
-<p>The code to connect the font setting is a little more involved,
-      since there is no simple object property that it corresponds to, so
-      we are not going to go into that here.</p>
-<p>At this point, the application will already react if you
-      change one of the settings, e.g. using the gsettings commandline
-      tool. Of course, we expect the application to provide a preference
-      dialog for these. So lets do that now. Our preference dialog will
-      be a subclass of GtkDialog, and we'll use the same techniques that
-      we've already seen: templates, private structs, settings
-      bindings.</p>
-<p>Lets start with the template.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>Next comes the dialog subclass.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application5/exampleappwin.c" target="_top">full source</a>)</p>
+      </div>
 
-<p>Now we revisit the <code class="literal">preferences_activated()</code> function in our
-      application class, and make it open a new preference dialog.</p>
-<div class="informalexample">
-<pre class="programlisting">
+      <p>The code to connect the font setting is a little more involved, since there is no simple object property that it corresponds to, so we are not going to go into that here.</p>
+
+      <p>At this point, the application will already react if you change one of the settings, e.g. using the gsettings commandline tool. Of course, we expect the application to provide a preference dialog for these. So lets do that now. Our preference dialog will be a subclass of GtkDialog, and we'll use the same techniques that we've already seen: templates, private structs, settings bindings.</p>
+
+      <p>Lets start with the template.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Next comes the dialog subclass.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Now we revisit the <code class="literal">preferences_activated()</code> function in our application class, and make it open a new preference dialog.</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 static void
@@ -508,39 +642,56 @@ preferences_activated (GSimpleAction *action,
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application6/exampleapp.c" target="_top">full source</a>)</p>
-</div>
-<p>After all this work, our application can now show
-      a preference dialog like this:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app6.png"></div></div>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.10"></a>Adding a search bar</h3></div></div></div>
-<p>We continue to flesh out the functionality of our application.
-      For now, we add search. GTK+ supports this with <a class="link" href="GtkSearchEntry.html" title="GtkSearchEntry"><span class="type">GtkSearchEntry</span></a> and
-      <a class="link" href="GtkSearchBar.html" title="GtkSearchBar"><span class="type">GtkSearchBar</span></a>. The search bar is a widget that can slide in from the
-      top to present a search entry.</p>
-<p>We add a toggle button to the header bar, which can be used
-      to slide out the search bar below the header bar.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>Implementing the search needs quite a few code changes that
-      we are not going to completely go over here. The central piece of
-      the search implementation is a signal handler that listens for
-      text changes in the search entry.</p>
-<div class="informalexample">
-<pre class="programlisting">
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application6/exampleapp.c" target="_top">full source</a>)</p>
+      </div>
+
+      <p>After all this work, our application can now show a preference dialog like this:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app6.png"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.10" id="id-1.2.3.12.10"></a>Adding a search bar</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>We continue to flesh out the functionality of our application. For now, we add search. GTK+ supports this with <a class="link" href="GtkSearchEntry.html" title="GtkSearchEntry"><span class="type">GtkSearchEntry</span></a> and <a class="link" href="GtkSearchBar.html" title="GtkSearchBar"><span class="type">GtkSearchBar</span></a>. The search bar is a widget that can slide in from the top to present a search entry.</p>
+
+      <p>We add a toggle button to the header bar, which can be used to slide out the search bar below the header bar.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Implementing the search needs quite a few code changes that we are not going to completely go over here. The central piece of the search implementation is a signal handler that listens for text changes in the search entry.</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 static void
@@ -589,48 +740,78 @@ example_app_window_init (ExampleAppWindow *win)
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application7/exampleappwin.c" target="_top">full source</a>)</p>
-</div>
-<p>With the search bar, our application now looks like this:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app7.png"></div></div>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.11"></a>Adding a side bar</h3></div></div></div>
-<p>As another piece of functionality, we are adding a sidebar,
-      which demonstrates <a class="link" href="GtkMenuButton.html" title="GtkMenuButton"><span class="type">GtkMenuButton</span></a>, <a class="link" href="GtkRevealer.html" title="GtkRevealer"><span class="type">GtkRevealer</span></a> and <a class="link" href="GtkListBox.html" title="GtkListBox"><span class="type">GtkListBox</span></a>.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>The code to populate the sidebar with buttons for the words
-      found in each file is a little too involved to go into here. But we'll
-      look at the code to add the gears menu.</p>
-<p>As expected by now, the gears menu is specified in a GtkBuilder
-      ui file.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application7/exampleappwin.c" target="_top">full source</a>)</p>
+      </div>
 
-<p>To connect the menuitem to the show-words setting, we use
-      a <a href="/usr/share/gtk-doc/html/gio/GAction.html#GAction-struct"><span class="type">GAction</span></a> corresponding to the given <a href="/usr/share/gtk-doc/html/gio/GSettings.html#GSettings-struct"><span class="type">GSettings</span></a> key.</p>
-<div class="informalexample">
-<pre class="programlisting">
+      <p>With the search bar, our application now looks like this:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app7.png"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.11" id="id-1.2.3.12.11"></a>Adding a side bar</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>As another piece of functionality, we are adding a sidebar, which demonstrates <a class="link" href="GtkMenuButton.html" title="GtkMenuButton"><span class="type">GtkMenuButton</span></a>, <a class="link" href="GtkRevealer.html" title="GtkRevealer"><span class="type">GtkRevealer</span></a> and <a class="link" href="GtkListBox.html" title="GtkListBox"><span class="type">GtkListBox</span></a>.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The code to populate the sidebar with buttons for the words found in each file is a little too involved to go into here. But we'll look at the code to add the gears menu.</p>
+
+      <p>As expected by now, the gears menu is specified in a GtkBuilder ui file.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>To connect the menuitem to the show-words setting, we use a <a href="/usr/share/gtk-doc/html/gio/GAction.html#GAction-struct"><span class="type">GAction</span></a> corresponding to the given <a href="/usr/share/gtk-doc/html/gio/GSettings.html#GSettings-struct"><span class="type">GSettings</span></a> key.</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 static void
@@ -650,45 +831,62 @@ example_app_window_init (ExampleAppWindow *win)
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application8/exampleappwin.c" target="_top">full source</a>)</p>
-</div>
-<p>What our application looks like now:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app8.png"></div></div>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.12"></a>Properties</h3></div></div></div>
-<p>Widgets and other objects have many useful properties.</p>
-<p>Here we show some ways to use them in new and flexible ways,
-      by wrapping them in actions with <a href="/usr/share/gtk-doc/html/gio/GPropertyAction.html#GPropertyAction-struct"><span class="type">GPropertyAction</span></a> or by binding them
-      with <a href="/usr/share/gtk-doc/html/gobject/GBinding.html#GBinding-struct"><span class="type">GBinding</span></a>.</p>
-<p>To set this up, we add two labels to the header bar in our
-      window template, named <em class="parameter"><code>lines_label</code></em> and <em class="parameter"><code>lines</code></em>, and bind them to
-      struct members in the private struct, as we've seen a couple of times
-      by now.</p>
-<p>We add a new "Lines" menu item to the gears menu, which
-      triggers the show-lines action:</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>To make this menu item do something, we create a property
-      action for the visible property of the <em class="parameter"><code>lines</code></em> label, and add it to the
-      actions of the window. The effect of this is that the visibility
-      of the label gets toggled every time the action is activated.</p>
-<p>Since we want both labels to appear and disappear together,
-      we bind the visible property of the <em class="parameter"><code>lines_label</code></em> widget to the
-      same property of the <em class="parameter"><code>lines</code></em> widget.</p>
-<div class="informalexample">
-<pre class="programlisting">
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application8/exampleappwin.c" target="_top">full source</a>)</p>
+      </div>
+
+      <p>What our application looks like now:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app8.png"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.12" id="id-1.2.3.12.12"></a>Properties</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>Widgets and other objects have many useful properties.</p>
+
+      <p>Here we show some ways to use them in new and flexible ways, by wrapping them in actions with <a href="/usr/share/gtk-doc/html/gio/GPropertyAction.html#GPropertyAction-struct"><span class="type">GPropertyAction</span></a> or by binding them with <a href="/usr/share/gtk-doc/html/gobject/GBinding.html#GBinding-struct"><span class="type">GBinding</span></a>.</p>
+
+      <p>To set this up, we add two labels to the header bar in our window template, named <em class="parameter"><code>lines_label</code></em> and <em class="parameter"><code>lines</code></em>, and bind them to struct members in the private struct, as we've seen a couple of times by now.</p>
+
+      <p>We add a new "Lines" menu item to the gears menu, which triggers the show-lines action:</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>To make this menu item do something, we create a property action for the visible property of the <em class="parameter"><code>lines</code></em> label, and add it to the actions of the window. The effect of this is that the visibility of the label gets toggled every time the action is activated.</p>
+
+      <p>Since we want both labels to appear and disappear together, we bind the visible property of the <em class="parameter"><code>lines_label</code></em> widget to the same property of the <em class="parameter"><code>lines</code></em> widget.</p>
+
+      <div class="informalexample">
+        <pre class="programlisting">
 ...
 
 static void
@@ -706,45 +904,65 @@ example_app_window_init (ExampleAppWindow *win)
 }
 
 ...
-        </pre>
-<p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application9/exampleappwin.c" target="_top">full source</a>)</p>
-</div>
-<p>We also need a function that counts the lines of the currently
-      active tab, and updates the <em class="parameter"><code>lines</code></em> label. See the
-      <a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application9/exampleappwin.c" target="_top">full source</a>
-      if you are interested in the details.</p>
-<p>This brings our example application to this appearance:</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app9.png"></div></div>
-</div>
-<div class="section">
-<div class="titlepage"><div><div><h3 class="title">
-<a name="id-1.2.3.12.13"></a>Header bar</h3></div></div></div>
-<p>Our application already uses a GtkHeaderBar, but so far it
-      still gets a 'normal' window titlebar on top of that. This is a
-      bit redundant, and we will now tell GTK+ to use the header bar
-      as replacement for the titlebar. To do so, we move it around to
-      be a direct child of the window, and set its type to be titlebar.</p>
-<div class="informalexample">
-  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
-    <tbody>
-      <tr>
-        <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">MISSING XINCLUDE CONTENT</pre></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        
+</pre>
 
-<p>A small extra bonus of using a header bar is that we get
-      a fallback application menu for free. Here is how the
-      application now looks, if this fallback is used.</p>
-<div class="informalfigure"><div class="mediaobject"><img src="getting-started-app10.png"></div></div>
-<p>If we set up the window icon for our window, the menu button
-      will use that instead of the generic placeholder icon you see
-      here.</p>
-</div>
-</div>
-<div class="footer">
-<hr>Generated by GTK-Doc V1.25</div>
+        <p>(<a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application9/exampleappwin.c" target="_top">full source</a>)</p>
+      </div>
+
+      <p>We also need a function that counts the lines of the currently active tab, and updates the <em class="parameter"><code>lines</code></em> label. See the <a class="ulink" href="https://git.gnome.org/browse/gtk+/tree/examples/application9/exampleappwin.c" target="_top">full source</a> if you are interested in the details.</p>
+
+      <p>This brings our example application to this appearance:</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app9.png"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a name="id-1.2.3.12.13" id="id-1.2.3.12.13"></a>Header bar</h3>
+          </div>
+        </div>
+      </div>
+
+      <p>Our application already uses a GtkHeaderBar, but so far it still gets a 'normal' window titlebar on top of that. This is a bit redundant, and we will now tell GTK+ to use the header bar as replacement for the titlebar. To do so, we move it around to be a direct child of the window, and set its type to be titlebar.</p>
+
+      <div class="informalexample">
+        <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+          <tbody>
+            <tr>
+              <td class="listing_lines" align="right">
+                <pre>
+1
+</pre>
+              </td>
+
+              <td class="listing_code">
+                <pre class="programlisting">
+MISSING XINCLUDE CONTENT
+</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>A small extra bonus of using a header bar is that we get a fallback application menu for free. Here is how the application now looks, if this fallback is used.</p>
+
+      <div class="informalfigure">
+        <div class="mediaobject"><img src="getting-started-app10.png"></div>
+      </div>
+
+      <p>If we set up the window icon for our window, the menu button will use that instead of the generic placeholder icon you see here.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <hr>
+    Generated by GTK-Doc V1.25
+  </div>
 </body>
 </html>
