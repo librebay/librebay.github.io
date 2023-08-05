@@ -20,6 +20,7 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
@@ -50,7 +51,7 @@ void       gtk_spin_button_set_value        (GtkSpinButton *spin_button, gdouble
 
 <p>Для создания объекта типа <code>GtkAdjustment</code> передайте в функцию нижнюю и верхнюю границы и размер приращения.</p>
 
-<pre><code>GtkAdjustment *
+<pre><code class="C">GtkAdjustment *
 gtk_adjustment_new (gdouble value,          // Начальное значение
                     gdouble lower,          // Минимальное значение
                     gdouble upper,          // Максимальное значение
@@ -67,7 +68,7 @@ gtk_adjustment_new (gdouble value,          // Начальное значени
 
 <p>Прочесть текущее значение очень легко благодаря функции <code>gtk_spin_button_get_value()</code>, а если вам нужно целое число, можно применить функцию <code>gtk_spin_button_get_value_as_int()</code>.</p>
 
-<h3 id="example-use-gtkspinbutton">Пример: использование виджета GtkSpinButton</h3>
+<h2 id="example-use-gtkspinbutton">Пример: использование виджета GtkSpinButton</h2>
 
 <p>Сейчас мы посмотрим в коротком примере, как действует кнопка-счётчик <code>GtkSpinButton</code>. Назовите файл <code>gtk_spin.c</code>.</p>
 
@@ -118,14 +119,13 @@ int main(int argc, char *argv[])
 
 <p>Назад: <a href="07-widgets-gtkentry.html">Виджет GtkEntry</a></p>
 
+<p>Вернуться <a href="../../index.html">на главную страницу</a></p>
+
 <p>Далее: <a href="09-widgets-gtkbutton.html">Виджеты класса GtkButton</a></p>
 
-<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
 
 
-
+      </article>
     </div>
-    <script src="../../js/jquery.js"></script>
-    <script src="../../js/bootstrap.js"></script>
   </body>
 </html>

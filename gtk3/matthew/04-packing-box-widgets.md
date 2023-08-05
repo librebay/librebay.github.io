@@ -8,7 +8,7 @@
 
 Виджет-контейнер `GtkBox` создаётся функцией:
 
-```
+```C
 GtkWidget *gtk_box_new (GtkOrientation orientation, gint spacing);
 ```
 
@@ -23,7 +23,7 @@ GtkWidget *gtk_box_new (GtkOrientation orientation, gint spacing);
 
 После того как упаковочный контейнер создан, добавьте в него виджеты с помощью функций `gtk_box_pack_start` и `gtk_box_pack_end`:
 
-```
+```C
 void gtk_box_pack_start (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 void gtk_box_pack_end (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 ```
@@ -70,7 +70,7 @@ void gtk_box_pack_end (GtkBox *box, GtkWidget *child, gboolean expand, gboolean 
 
 Давайте теперь рассмотрим эти виджеты упаковочных контейнеров и создадим более сложный пользовательский интерфейс, демонстрирующий вложенные упаковочные контейнеры.
 
-### Пример: Макет виджета-контейнера [example-widget-container-layout]
+## Пример: Макет виджета-контейнера [example-widget-container-layout]
 
 В этом примере вы спланируете размещение нескольких простых виджетов-меток типа `GtkLabel` с помощью контейнеров `GtkBox`. Виджеты-метки &mdash; простые графические элементы, подходящие для вывода коротких текстовых фрагментов. Назовите эту программу `gtk_container.c`:
 
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
 ![Рис.1. Размещение меток в контейнерах](images/gtk_container.png)
 
-#### Как это работает [how-it-works]
+### Как это работает [how-it-works]
 
 Вы создаёте два виджета упаковочных контейнеров: `hbox` и `vbox`, горизонтальный и вертикальный, соответственно. С помощью функции `gtk_box_pack_start` вы заполняете `vbox` виджетами `label1` и `label2`, причем `label2` располагается у нижнего края контейнера, потому что вставляется после `label1`. Далее контейнер `vbox` целиком наряду с меткой `label3` вставляется в контейнер `hbox`.
 
@@ -149,24 +149,11 @@ int main(int argc, char *argv[])
 
 Познакомившись с виджетами, сигналами, обратными вызовами и виджетами-контейнерами, вы рассмотрели основы комплекта инструментов GTK+. Но для того, чтобы стать программистом, профессионально применяющим GTK+, нужно понять, как наилучшим образом использовать имеющиеся в комплекте виджеты.
 
+
 ----------
 
 Назад: [События, сигналы и обратные вызовы](03-events-signals-and-callbacks.html)
 
+Вернуться  [на главную страницу](../../index.html)
+
 Далее: [Виджеты GTK+](05-widgets-gtk.html)
-
-Вернуться  [на главную страницу](../../index.html).
-
-
-
-
-
-
-
-
-
-
-
-
-
-

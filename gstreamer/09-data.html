@@ -7,6 +7,8 @@
 
     <title>Фреймворк GStreamer. Руководство разработчика приложений. Буферы и события</title>
 
+    <link href="../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+
     <link href="../css/bootstrap.css" rel="stylesheet">
     <link href="../css/librebay.css" rel="stylesheet">
 
@@ -18,16 +20,17 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
 <h1 id="h1-buffers-and-events">Фреймворк GStreamer. Руководство разработчика приложений. Буферы и события</h1>
 
-<p>Оригинал: GStreamer Application Development Manual<br/>
-Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br/>
-Дата публикации: 21 мая 2014 г.<br/>
-Перевод: А.Панин<br/>
-Дата перевода: 19 июня 2014 г.<br/>
+<p>Оригинал: GStreamer Application Development Manual<br />
+Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br />
+Дата публикации: 21 мая 2014 г.<br />
+Перевод: А.Панин<br />
+Дата перевода: 19 июня 2014 г.<br />
 Оригинал перевода: <a href="http://rus-linux.net/MyLDP/BOOKS/gstreamer/09-data.html">Фреймворк GStreamer. Руководство разработчика приложений. Буферы и события</a></p>
 
 <h2 id="buffers-and-events">Глава 9. Буферы и события</h2>
@@ -59,14 +62,14 @@
 
 <pre><code>static void
 seek_to_time (GstElement *element,
-          guint64     time_ns)
+	      guint64     time_ns)
 {
   GstEvent *event;
 
   event = gst_event_new_seek (1.0, GST_FORMAT_TIME,
-                  GST_SEEK_FLAG_NONE,
-                  GST_SEEK_METHOD_SET, time_ns,
-                  GST_SEEK_TYPE_NONE, G_GUINT64_CONSTANT (0));
+			      GST_SEEK_FLAG_NONE,
+			      GST_SEEK_METHOD_SET, time_ns,
+			      GST_SEEK_TYPE_NONE, G_GUINT64_CONSTANT (0));
   gst_element_send_event (element, event);
 }
 </code></pre>
@@ -83,8 +86,7 @@ seek_to_time (GstElement *element,
 
 
 
+      </article>
     </div>
-    <script src="../js/jquery.js"></script>
-    <script src="../js/bootstrap.js"></script>
   </body>
 </html>

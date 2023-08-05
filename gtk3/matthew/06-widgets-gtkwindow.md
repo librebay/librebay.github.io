@@ -80,6 +80,6 @@ void       gtk_window_unmaximize       (GtkWindow *window);
 
 Назад: [Виджеты GTK+](05-widgets-gtk.html)
 
-Далее: [Виджет GtkEntry](07-widgets-gtkentry.html)
+Вернуться  [на главную страницу](../../index.html)
 
-Вернуться  [на главную страницу](../../index.html).
+Далее: [Виджет GtkEntry](07-widgets-gtkentry.html)

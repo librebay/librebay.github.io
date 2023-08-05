@@ -20,6 +20,7 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
@@ -86,7 +87,7 @@ gtk_tree_store_append(store, &amp;iter, NULL);
 
 <p>Для того чтобы добавить ветвь к данной строке (дочернюю строку), вам нужен только итератор для дочерней строки, который вы получаете, вызвав снова функцию <code>gtk_tree_store_append()</code> и указав на этот раз в качестве параметра строку верхнего уровня:</p>
 
-<pre><code>GtkTreeIter child;
+<pre><code class="C">GtkTreeIter child;
 gtk_tree_store_append(store, &amp;child, &amp;iter);
 
 </code></pre>
@@ -102,12 +103,12 @@ gtk_tree_store_append(store, &amp;child, &amp;iter);
 
 <p>Создание объекта <code>GtkTreeView</code> сама простота: только передайте в конструктор в качестве параметра модель типа <code>GtkTreeStore</code> или <code>GtkListStore</code>:</p>
 
-<pre><code>GtkWidget *view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+<pre><code class="C">GtkWidget *view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 </code></pre>
 
-<p>Сейчас самое время настроить виджет для отображения данных именно так, как вы хотите. Для каждого столбца следует определить &#8217;GtkCellRenderer` и источник данных. Можно выбрать, например, визуализацию только определенных столбцов данных или изменить порядок вывода столбцов.</p>
+<p>Сейчас самое время настроить виджет для отображения данных именно так, как вы хотите. Для каждого столбца следует определить 'GtkCellRenderer` и источник данных. Можно выбрать, например, визуализацию только определенных столбцов данных или изменить порядок вывода столбцов.</p>
 
-<p>&#8217;GtkCellRenderer` &mdash; это объект, отвечающий за прорисовку каждой ячейки на экране, и существует три подкласса, имеющие дело с текстовыми ячейками, ячейками пиксельной графики и ячейками кнопок-выключателей:</p>
+<p>'GtkCellRenderer` &mdash; это объект, отвечающий за прорисовку каждой ячейки на экране, и существует три подкласса, имеющие дело с текстовыми ячейками, ячейками пиксельной графики и ячейками кнопок-выключателей:</p>
 
 <ul>
 <li><code>GtkCellRendererText</code>;</li>
@@ -130,13 +131,13 @@ gtk_tree_view_insert_column_with_attributes(
 
 <p>В примере далее, выполнив необходимые шаги, вы увидите, как это работает на практике.</p>
 
-<h3 id="example-use-gtktreeview">Пример: использование виджета GtkTreeView</h3>
+<h2 id="example-use-gtktreeview">Пример: использование виджета GtkTreeView</h2>
 
 <p>Введите следующий программный код и назовите файл <code>gtk_tree.c</code>.</p>
 
 <ol>
-<li>
-<p>Примените тип <code>enum</code> для обозначения столбцов, чтобы можно было ссылаться на них по именам. Общее количество столбцов удобно обозначить как <code>N_COLUMNS</code>:</p>
+<li><p>Примените тип <code>enum</code> для обозначения столбцов, чтобы можно было ссылаться на них по именам. Общее количество столбцов удобно обозначить как <code>N_COLUMNS</code>:</p>
+
 <pre><code class="C">#include &lt;gtk/gtk.h&gt;
 
 enum {
@@ -168,15 +169,13 @@ int main(int argc, char *argv[])
     gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 
     g_signal_connect(G_OBJECT(window), &quot;destroy&quot;, G_CALLBACK(closeApp), NULL);
-</code></pre>
-</li>
-<li>
-<p>Далее вы создаёте модель дерева, передавая количество столбцов и тип каждого из них:</p>
+</code></pre></li>
+<li><p>Далее вы создаёте модель дерева, передавая количество столбцов и тип каждого из них:</p>
+
 <pre><code class="C">    store = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-</code></pre>
-</li>
-<li>
-<p>Следующий этап &mdash; вставка родительской и дочерней строк в дерево:</p>
+</code></pre></li>
+<li><p>Следующий этап — вставка родительской и дочерней строк в дерево:</p>
+
 <pre><code class="C">    gtk_tree_store_append(store, &amp;parent_iter, NULL);
     gtk_tree_store_set(store, &amp;parent_iter,
                        COLUMN_TITLE, &quot;Dark Side of the Moon&quot;,
@@ -187,10 +186,9 @@ int main(int argc, char *argv[])
     gtk_tree_store_set(store, &amp;child_iter, COLUMN_TITLE, &quot;Speak to Me&quot;, -1);
 
     view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-</code></pre>
-</li>
-<li>
-<p>Наконец, добавьте столбцы в представление, задавая источники данных для них и заголовки:</p>
+</code></pre></li>
+<li><p>Наконец, добавьте столбцы в представление, задавая источники данных для них и заголовки:</p>
+
 <pre><code class="C">    renderer = gtk_cell_renderer_text_new();
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
                                                 COLUMN_TITLE,
@@ -216,22 +214,18 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-</code></pre>
-</li>
+</code></pre></li>
 </ol>
 
 <hr />
 
 <p>Назад: <a href="09-widgets-gtkbutton.html">Виджеты класса GtkButton</a></p>
 
-<p>Далее: </p>
-
-<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
+<p>Вернуться <a href="../../index.html">на главную страницу</a></p>
 
 
 
+      </article>
     </div>
-    <script src="../../js/jquery.js"></script>
-    <script src="../../js/bootstrap.js"></script>
   </body>
 </html>

@@ -7,6 +7,8 @@
 
     <title>Фреймворк GStreamer. Руководство разработчика приложений. Инициализация библиотеки фреймворка GStreamer</title>
 
+    <link href="../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+
     <link href="../css/bootstrap.css" rel="stylesheet">
     <link href="../css/librebay.css" rel="stylesheet">
 
@@ -18,16 +20,17 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
 <h1 id="h1-initializing-gstreamer">Фреймворк GStreamer. Руководство разработчика приложений. Инициализация библиотеки фреймворка GStreamer</h1>
 
-<p>Оригинал: GStreamer Application Development Manual<br/>
-Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br/>
-Дата публикации: 21 мая 2014 г.<br/>
-Перевод: А.Панин<br/>
-Дата перевода: 18 июня 2014 г.<br/>
+<p>Оригинал: GStreamer Application Development Manual<br />
+Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br />
+Дата публикации: 21 мая 2014 г.<br />
+Перевод: А.Панин<br />
+Дата перевода: 18 июня 2014 г.<br />
 Оригинал перевода: <a href="http://rus-linux.net/MyLDP/BOOKS/gstreamer/04-init.html">Фреймворк GStreamer. Руководство разработчика приложений. Инициализация библиотеки фреймворка GStreamer</a></p>
 
 <h2 id="building-an-application">Часть II. Создание приложения</h2>
@@ -44,7 +47,7 @@
 
 <p>Перед тем, как библиотеки фреймворка GStreamer смогут использоваться, из главного программного потока приложения должен быть осуществлен вызов функции <code>gst_init</code>. Этот вызов позволит выполнить необходимые операции инициализации библиотеки, а также разобрать специфичные для фреймворка GStreamer параметры командной строки.</p>
 
-<p>Типичная программа<a href="#fn:1" id="fnref:1" title="see footnote" class="footnote">[1]</a> должна содержать аналогичный следующему код для инициализации библиотеки фреймворка GStreamer:</p>
+<p>Типичная программа<a href="#fn:1" id="fnref:1" title="see footnote" class="footnote"><sup>1</sup></a> должна содержать аналогичный следующему код для инициализации библиотеки фреймворка GStreamer:</p>
 
 <p><strong>Пример 4.1. Инициализация библиотеки фреймворка GStreamer</strong></p>
 
@@ -78,7 +81,7 @@ main (int   argc,
 
 <p>Используйте макросы <code>GST_VERSION_MAJOR</code>, <code>GST_VERSION_MINOR</code> и <code>GST_VERSION_MICRO</code> для получения версии библиотеки фреймворка GStreamer, с которой будет связываться ваше приложение или функцию <code>gst_version</code> для получения версии библиотеки, с которой оно уже связано. На данный момент фреймворк GStreamer использует схему версий, в которой библиотеки одной и той же версии с одной и той же подверсией совместимы на уровне API и ABI.</p>
 
-<p>Также можете вызывать функцию <code>gst_init</code> с двумя аргументами <code>NULL</code>, но в этом случае никакие из аргументов командной строки не будут разобраны средствами фреймворка GStreamer. </p>
+<p>Также можете вызывать функцию <code>gst_init</code> с двумя аргументами <code>NULL</code>, но в этом случае никакие из аргументов командной строки не будут разобраны средствами фреймворка GStreamer.</p>
 
 <h3 id="the-goption-interface">4.2. Интерфейс GOption</h3>
 
@@ -134,7 +137,7 @@ main (int   argc,
 <ol>
 
 <li id="fn:1">
-<p>Код для данного примера автоматически извлечен из документации и добавлен в директорию <code>tests/examples/manual</code> архива исходного кода фреймворка GStreamer. <a href="#fnref:1" title="return to article" class="reversefootnote">&#160;&#8617;</a></p>
+<p>Код для данного примера автоматически извлечен из документации и добавлен в директорию <code>tests/examples/manual</code> архива исходного кода фреймворка GStreamer. <a href="#fnref:1" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
 </li>
 
 </ol>
@@ -142,9 +145,7 @@ main (int   argc,
 
 
 
-
+      </article>
     </div>
-    <script src="../js/jquery.js"></script>
-    <script src="../js/bootstrap.js"></script>
   </body>
 </html>

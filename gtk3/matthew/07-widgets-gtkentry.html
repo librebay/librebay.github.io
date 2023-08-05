@@ -20,6 +20,7 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
@@ -51,23 +52,22 @@ void         gtk_entry_set_invisible_char (GtkEntry *entry, gunichar ch);
 
 <p>Вы можете вручную задать содержимое виджета <code>GtkEntry</code>, применив функцию <code>gtk_entry_set_text</code>. Учтите, что она принимает указатель <code>const gchar</code>.</p>
 
-<h3 id="example-username-and-password-entry">Пример: ввод имени пользователя и пароля</h3>
+<h2 id="example-username-and-password-entry">Пример: ввод имени пользователя и пароля</h2>
 
 <p>Теперь, познакомившись с функциями виджета <code>GtkEntry</code>, посмотрим на них в действии в небольшой программе. Программа <code>gtk_entry.c</code> будет создавать окно ввода имени пользователя и пароля и сравнивать введенный пароль с секретным.</p>
 
 <ol>
-<li>
-<p>Сначанала определим секретный пароль, остроумно заданный как <code>secret</code>:</p>
+<li><p>Сначанала определим секретный пароль, остроумно заданный как <code>secret</code>:</p>
+
 <pre><code class="C">#include &lt;gtk/gtk.h&gt;
 #include &lt;stdio.h&gt;
 #include &lt;string.h&gt;
 
 const char *password = &quot;secret&quot;;
-</code></pre>
-</li>
-<li>
-<p>У вас есть две функции обратно вызова, которые вызываются, когда уничтожается окно и щелкатеся мышью кнопка "OK":</p>
-<pre><code>void closeApp(GtkWidget *window, gpointer data)
+</code></pre></li>
+<li><p>У вас есть две функции обратно вызова, которые вызываются, когда уничтожается окно и щелкатеся мышью кнопка &#8220;OK&#8221;:</p>
+
+<pre><code class="C">void closeApp(GtkWidget *window, gpointer data)
 {
     gtk_main_quit();
 }
@@ -81,11 +81,10 @@ void button_clicked(GtkWidget *button, gpoвinter data)
     else
         printf(&quot;Access denied!\n&quot;);
 }
-</code></pre>
-</li>
-<li>
-<p>В функции <code>main</code> создаётся, компонуется интерфейс и связываются обратные вызовы с сигналами. Для компоновки виджетов меток и полей ввода примените виджеты-контейнеры <code>GtkBox</code>:</p>
-<pre><code>int main(int argc, char *argv[])
+</code></pre></li>
+<li><p>В функции <code>main</code> создаётся, компонуется интерфейс и связываются обратные вызовы с сигналами. Для компоновки виджетов меток и полей ввода примените виджеты-контейнеры <code>GtkBox</code>:</p>
+
+<pre><code class="C">int main(int argc, char *argv[])
 {
     GtkWidget *window;
     GtkWidget *username_label, *password_label;
@@ -141,8 +140,7 @@ void button_clicked(GtkWidget *button, gpoвinter data)
 
     return 0;
 }
-</code></pre>
-</li>
+</code></pre></li>
 </ol>
 
 <p>Когда вы запустите программу, то получите окно, показанное на рис. 1.</p>
@@ -152,7 +150,7 @@ void button_clicked(GtkWidget *button, gpoвinter data)
 <figcaption>Рис. 1. Ввод имени пользователя и пароля, используя GtkEntry</figcaption>
 </figure>
 
-<h4 id="how-it-works">Как это работает</h4>
+<h3 id="how-it-works">Как это работает</h3>
 
 <p>Программа создает два виджета типа <code>GtkEntry</code>, <code>username_entry</code> и <code>password_entry</code>, а также задает видимость <code>password_entry</code>, равной <code>FALSE</code>, чтобы скрыть введенный пароль. Затем она формирует кнопку <code>GtkButton</code>, с помощью которой вы связываете сигнал <code>clicked</code> с функцией обратного вызова <code>button_clicked</code>.</p>
 
@@ -164,14 +162,13 @@ void button_clicked(GtkWidget *button, gpoвinter data)
 
 <p>Назад: <a href="06-widgets-gtkwindow.html">Виджет GtkWindow</a></p>
 
+<p>Вернуться <a href="../../index.html">на главную страницу</a></p>
+
 <p>Далее: <a href="08-widgets-gtkspinbutton.html">Виджет GtkSpinButton</a></p>
 
-<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
 
 
-
+      </article>
     </div>
-    <script src="../../js/jquery.js"></script>
-    <script src="../../js/bootstrap.js"></script>
   </body>
 </html>

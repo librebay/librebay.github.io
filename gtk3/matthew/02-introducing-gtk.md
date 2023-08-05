@@ -37,7 +37,7 @@ GLib и GObject помогают межплатформным разработк
 
 В библиотеке GLib также определено несколько очень удобных констант:
 
-```
+```C
 #include <glib/gmacros.h>
 
 #define FALSE 0
@@ -66,31 +66,35 @@ GLib и GObject помогают межплатформным разработк
 
 Давайте рассмотрим образец наследования и полиморфизма на примере иерархии объектов `GtkWindow`, взятой из документации GTK+ API.
 
-<pre>GObject
+```text
+GObject
 ╰── GInitiallyUnowned
     ╰── GtkWidget
         ╰── GtkContainer
             ╰── GtkBin
                 ╰── GtkWindow
-</pre>
+```
 
 Этот список объектов говорит о том, что объект `GtkWindow` &mdash; потомок `GtkBin`, и, следовательно, любую функцию , которую вы вызываете с объектом `GtkBin`, вы можете вызвать и с объектом `GtkWindow`. Точно так же объект `GtkWindow` наследует из объекта `GtkContainer`, который в свою очередь наследует из объекта `GtkWidget`.
 
 Для удобства все функции создания виджетов возвращают тип `GtkWidget`. Например,
 
-<pre>GtkWidget *gtk_window_new (GtkWindowType type);
-</pre>
+```C
+GtkWidget *gtk_window_new (GtkWindowType type);
+```
 
 Предположим, что вы создаете объект `GtkWindow` и хотите передать возвращенное значение в функцию, ожидающую объект типа `GtkContainer`, например, такую, как `gtk_container_add`:
 
-<pre>void gtk_container_add (GtkContainer *container, GtkWidget *widget);
-</pre>
+```C
+void gtk_container_add (GtkContainer *container, GtkWidget *widget);
+```
 
 Вы применяете макрос `GTK_CONTAINER` для приведения типов `GtkWidget` и `GtkContainer`:
 
-<pre>GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+```C
+GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 gtk_container_add (GTK_CONTAINER (window), awidget);
-</pre>
+```
 
 Назначение этих функций вы узнаете позже; сейчас просто отметьте для себя частое применение макросов. Для каждого возможного приведения типа существует макрос.
 
@@ -119,12 +123,12 @@ GNOME &mdash; имя, данное проекту, начатому в 1997 г. 
 
 В дистрибутиве Debian и основанных на Debian системах, таких как Ubuntu, вы можете использовать программу `apt` (или `apt-get`) для установки пакетов GTK+ с разных сайтов-зеркал (mirrors). Так для установки библиотек разработки GTK+ будет команда:
 
-<pre>sudo apt install libgtk-3-dev
+<pre class="terminal"><span class="user"></span>sudo apt install libgtk-3-dev
 </pre>
 
 Опробуйте также демонстрационное приложение GTK+ &mdash; `gtk3-demo`, в котором показаны практически все виджеты и их оформление (рис. 2). Установить `gtk3-demo` можно командой:
 
-<pre>sudo apt install gtk-3-examples
+<pre class="terminal"><span class="user"></span>sudo apt install gtk-3-examples
 </pre>
 
 ![Рис. 2. `gtk3-demo` &mdash; демонстрационное приложение GTK+](images/gtk3-demo.png)
@@ -135,7 +139,7 @@ GNOME &mdash; имя, данное проекту, начатому в 1997 г. 
 > Для каждого виджета отображаются вкладки **Info** (Информация) и **Source** (Исходный код). На вкладке **Source** приведен программный код на языке C для применения данного виджета. На ней может быть представлено множество примеров.
 
 
-### Пример: Обычное окно GtkWindow [example-a-plain-gtkwindow]
+## Пример: Обычное окно GtkWindow [example-a-plain-gtkwindow]
 
 Давайте начнем программирование средствами GTK+ с простейшей из программ GUI &mdash; отображения окна. Вы увидите библиотеку GTK+ в действии и большой набор функциональных возможностей, получаемых из очень короткого программного кода.
 
@@ -156,11 +160,11 @@ int main(int argc, char *argv[])
     return 0;
 }
 ```
+
 Для компиляции `gtk1.c` введите следующую команду:
 
-```
-gcc gtk1.c -o gtk1 `pkg-config --cflags --libs gtk+-3.0`
-```
+<pre class="terminal"><span class="user"></span>gcc gtk1.c -o gtk1 `pkg-config --cflags --libs gtk+-3.0`
+</pre>
 
 > *Примечание*
 >
@@ -169,14 +173,14 @@ gcc gtk1.c -o gtk1 `pkg-config --cflags --libs gtk+-3.0`
 
 Когда вы выполните программу с помощью следующей команды, ваше окно должно раскрыться (рис. 3).
 
-<pre>./gtk1
+<pre class="terminal"><span class="user"></span>./gtk1
 </pre>
 
 ![Рис. 3. Обычное окно GtkWindow](images/gtkwindow.png)
 
 Учтите, что вы можете перемещать окно, изменять его размер, сворачивать и раскрывать его на весь экран.
 
-#### Как это работает [how-it-works]
+### Как это работает [how-it-works]
 
 Включить заголовочные файлы, необходимые для библиотек GTK+ и связанных с ними библиотек, можно с помощью одного оператора ``#include <gtk/gtk.h>``. Далее вы объявляете окно как указатель на объект `GtkWidget`.
 
@@ -209,8 +213,8 @@ gtk_widget_show(window);
 
 ----------
 
-Назад: [Введение в систему X](01-introducing-x.html).
+Назад: [Введение в систему X](01-introducing-x.html)
+
+Вернуться  [на главную страницу](../../index.html)
 
 Далее: [События, сигналы и обратные вызовы](03-events-signals-and-callbacks.html)
-
-Вернуться  [на главную страницу](../../index.html).

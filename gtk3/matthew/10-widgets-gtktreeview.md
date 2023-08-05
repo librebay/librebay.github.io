@@ -5,9 +5,9 @@
 ```nohighlight
 GObject
 ╰── GInitiallyUnowned
-	╰── GtkWidget
-		╰── GtkContainer
-			╰── GtkTreeView
+    ╰── GtkWidget
+        ╰── GtkContainer
+            ╰── GtkTreeView
 ```
 
 `GtkTreeView` &mdash; член семейства виджетов, создающий представление данных в виде дерева или списка наподобие тех, которые вы можете встретить в электронной таблице или файловом менеджере. С помощью виджета `GtkTreeView` можно создать сложные представления данных, смешивая текст, растровую графику и даже данные вводимые с помощью виджетов `GtkEntry`, и т. д.
@@ -60,7 +60,7 @@ gtk_tree_store_set(store, &iter,
 
 Для того чтобы добавить ветвь к данной строке (дочернюю строку), вам нужен только итератор для дочерней строки, который вы получаете, вызвав снова функцию `gtk_tree_store_append()` и указав на этот раз в качестве параметра строку верхнего уровня:
 
-```
+```C
 GtkTreeIter child;
 gtk_tree_store_append(store, &child, &iter);
 
@@ -75,7 +75,7 @@ gtk_tree_store_append(store, &child, &iter);
 
 Создание объекта `GtkTreeView` сама простота: только передайте в конструктор в качестве параметра модель типа `GtkTreeStore` или `GtkListStore`:
 
-```
+```C
 GtkWidget *view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
 ```
 
@@ -104,105 +104,100 @@ gtk_tree_view_insert_column_with_attributes(
 В примере далее, выполнив необходимые шаги, вы увидите, как это работает на практике.
 
 
-### Пример: использование виджета GtkTreeView [example-use-gtktreeview]
+## Пример: использование виджета GtkTreeView [example-use-gtktreeview]
 
 Введите следующий программный код и назовите файл `gtk_tree.c`.
 
-<ol>
-<li>
-<p>Примените тип <code>enum</code> для обозначения столбцов, чтобы можно было ссылаться на них по именам. Общее количество столбцов удобно обозначить как <code>N_COLUMNS</code>:</p>
-<pre><code class="C">#include &lt;gtk/gtk.h&gt;
+1. Примените тип `enum` для обозначения столбцов, чтобы можно было ссылаться на них по именам. Общее количество столбцов удобно обозначить как `N_COLUMNS`:
 
-enum {
-    COLUMN_TITLE,
-    COLUMN_ARTIST,
-    COLUMN_CATALOGUE,
-    N_COLUMNS
-};
+    ```C
+    #include <gtk/gtk.h>
 
-void closeApp(GtkWidget *window, gpointer data)
-{
-    gtk_main_quit();
-}
+    enum {
+        COLUMN_TITLE,
+        COLUMN_ARTIST,
+        COLUMN_CATALOGUE,
+        N_COLUMNS
+    };
 
-int main(int argc, char *argv[])
-{
-    GtkWidget *window;
-    GtkTreeStore *store;
-    GtkWidget *view;
-    GtkTreeIter parent_iter, child_iter;
-    GtkCellRenderer *renderer;
+    void closeApp(GtkWidget *window, gpointer data)
+    {
+        gtk_main_quit();
+    }
 
-
-    gtk_init(&amp;argc, &amp;argv);
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), &quot;Tree&quot;);
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
-    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
-
-    g_signal_connect(G_OBJECT(window), &quot;destroy&quot;, G_CALLBACK(closeApp), NULL);
-</code></pre>
-</li>
-<li>
-<p>Далее вы создаёте модель дерева, передавая количество столбцов и тип каждого из них:</p>
-<pre><code class="C">    store = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-</code></pre>
-</li>
-<li>
-<p>Следующий этап &mdash; вставка родительской и дочерней строк в дерево:</p>
-<pre><code class="C">    gtk_tree_store_append(store, &amp;parent_iter, NULL);
-    gtk_tree_store_set(store, &amp;parent_iter,
-                       COLUMN_TITLE, &quot;Dark Side of the Moon&quot;,
-                       COLUMN_ARTIST, &quot;Pink Floyd&quot;,
-                       COLUMN_CATALOGUE, &quot;B000024D4P&quot;,
-                       -1);
-    gtk_tree_store_append(store, &amp;child_iter, &amp;parent_iter);
-    gtk_tree_store_set(store, &amp;child_iter, COLUMN_TITLE, &quot;Speak to Me&quot;, -1);
-
-    view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-</code></pre>
-</li>
-<li>
-<p>Наконец, добавьте столбцы в представление, задавая источники данных для них и заголовки:</p>
-<pre><code class="C">    renderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
-                                                COLUMN_TITLE,
-                                                &quot;Title&quot;, renderer,
-                                                &quot;text&quot;, COLUMN_TITLE,
-                                                NULL);
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
-                                                COLUMN_ARTIST,
-                                                &quot;Catalogue&quot;, renderer,
-                                                &quot;text&quot;, COLUMN_ARTIST,
-                                                NULL);
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
-                                                COLUMN_CATALOGUE,
-                                                &quot;Catalogue&quot;, renderer,
-                                                &quot;text&quot;, COLUMN_CATALOGUE,
-                                                NULL);
-
-    gtk_container_add(GTK_CONTAINER(window), view);
-
-    gtk_widget_show_all(window);
-
-    gtk_main();
-
-    return 0;
-}
-</code></pre>
-</li>
-</ol>
+    int main(int argc, char *argv[])
+    {
+        GtkWidget *window;
+        GtkTreeStore *store;
+        GtkWidget *view;
+        GtkTreeIter parent_iter, child_iter;
+        GtkCellRenderer *renderer;
 
 
+        gtk_init(&argc, &argv);
+        window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        gtk_window_set_title(GTK_WINDOW(window), "Tree");
+        gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+        gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+        gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 
+        g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(closeApp), NULL);
+    ```
 
+2. Далее вы создаёте модель дерева, передавая количество столбцов и тип каждого из них:
+
+    ```C
+        store = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+    ```
+
+3. Следующий этап — вставка родительской и дочерней строк в дерево:
+
+    ```C
+        gtk_tree_store_append(store, &parent_iter, NULL);
+        gtk_tree_store_set(store, &parent_iter,
+                           COLUMN_TITLE, "Dark Side of the Moon",
+                           COLUMN_ARTIST, "Pink Floyd",
+                           COLUMN_CATALOGUE, "B000024D4P",
+                           -1);
+        gtk_tree_store_append(store, &child_iter, &parent_iter);
+        gtk_tree_store_set(store, &child_iter, COLUMN_TITLE, "Speak to Me", -1);
+
+        view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+    ```
+
+4. Наконец, добавьте столбцы в представление, задавая источники данных для них и заголовки:
+
+    ```C
+        renderer = gtk_cell_renderer_text_new();
+        gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                                    COLUMN_TITLE,
+                                                    "Title", renderer,
+                                                    "text", COLUMN_TITLE,
+                                                    NULL);
+        gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                                    COLUMN_ARTIST,
+                                                    "Catalogue", renderer,
+                                                    "text", COLUMN_ARTIST,
+                                                    NULL);
+        gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(view),
+                                                    COLUMN_CATALOGUE,
+                                                    "Catalogue", renderer,
+                                                    "text", COLUMN_CATALOGUE,
+                                                    NULL);
+
+        gtk_container_add(GTK_CONTAINER(window), view);
+
+        gtk_widget_show_all(window);
+
+        gtk_main();
+
+        return 0;
+    }
+    ```
 
 
 ----------
 
 Назад: [Виджеты класса GtkButton](09-widgets-gtkbutton.html)
 
-Далее: 
-
-Вернуться  [на главную страницу](../../index.html).
+Вернуться  [на главную страницу](../../index.html)

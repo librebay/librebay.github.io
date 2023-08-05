@@ -20,6 +20,7 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
@@ -65,7 +66,7 @@
 <p>До появления GTK+ 2 для связывания функций обратного вызова применялась функция-макрос <code>gtk_signal_connect</code>. Начиная с GTK+ 2, она была заменена на функцию-макрос <code>g_signal_connect</code>.</p>
 </blockquote>
 
-<h3 id="example-a-callback-function">Пример: Функция обратного вызова</h3>
+<h2 id="example-a-callback-function">Пример: Функция обратного вызова</h2>
 
 <p>Рассмотрим пример, где опробуем работу функции-макроса <code>g_signal_connect</code>.</p>
 
@@ -110,7 +111,7 @@ int main(int argc, char *argv[])
 <figcaption>Рис. 1. Рассмотрение работы функции обратного вызова на примере кнопки</figcaption>
 </figure>
 
-<h4 id="how-it-works">Как это работает</h4>
+<h3 id="how-it-works">Как это работает</h3>
 
 <p>Вы добавили два новых элемента в программу <code>gtk_callback.c</code>: виджет <code>GtkButton</code> и функцию обратного вызова. <code>GtkButton</code> &mdash; это виджет простой кнопки, которая может содержать текст, в нашем случае &#8220;Hello World&#8221;, и порождает сигнал, названный <code>clicked</code>, каждый раз, когда кнопку щелкают мышью.</p>
 
@@ -139,14 +140,13 @@ int main(int argc, char *argv[])
 
 <p>Назад: <a href="02-introducing-gtk.html">Введение в GTK+</a></p>
 
+<p>Вернуться <a href="../../index.html">на главную страницу</a></p>
+
 <p>Далее: <a href="04-packing-box-widgets.html">Виджеты упаковочных контейнеров</a></p>
 
-<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
 
 
-
+      </article>
     </div>
-    <script src="../../js/jquery.js"></script>
-    <script src="../../js/bootstrap.js"></script>
   </body>
 </html>

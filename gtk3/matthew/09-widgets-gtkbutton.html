@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Title</title>
+    <title>GtkButton</title>
 
     <link href="../../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
 
@@ -20,10 +20,11 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
-<h2 id="gtkbutton">GtkButton</h2>
+<h1 id="gtkbutton">GtkButton</h1>
 
 <p>Вы уже видели виджет кнопки <code>GtkButton</code> в действии, но существует несколько виджетов, потомков <code>GtkButton</code>, с чуть бо&#x301;льшими функциональными возможностями, заслуживающими упоминания.</p>
 
@@ -40,7 +41,7 @@
 
 <p>Как видно из иерархии виджетов, кнопка-выключатель типа <code>GtkToggleButton</code> &mdash; прямой потомок кнопки <code>GtkButton</code>, кнопка-флажок <code>GtkCheckButton</code> &mdash; кнопки-выключателя <code>GtkToggleButton</code> и тоже самое для переключателя <code>GtkRadioButton</code>, причем каждый дочерний виджет предназначен для определенных задач.</p>
 
-<h3 id="gtktogglebutton">GtkToggleButton</h3>
+<h2 id="gtktogglebutton">GtkToggleButton</h2>
 
 <p>Виджет <code>GtkToggleButton</code> идентичен виджету <code>GtkButton</code> за исключение одной важной детали: <code>GtkToggleButton</code> обладает <em>состоянием</em>. Это означает, что кнопка-выключатель может быть включена или выключена. Когда пользователь щелкает мышью виджет <code>GtkToggleButton</code>, последний стандартным способом порождает сигнал <code>clicked</code> и изменяет (или &#8220;Переключает&#8221;) свое состояние.</p>
 
@@ -54,7 +55,7 @@ void       gtk_toggle_button_set_active     (GtkToggleButton *toggle_button, gbo
 
 <p>Наиболее интересные функции &mdash; <code>gtk_toggle_button_get_active</code> и <code>gtk_toggle_button_set_active</code>, которые вы вызываете для четния и установки состояния кнопки-выключателя. Если характеристика функционирования равна <code>TRUE</code>, это означает, что кнопка-выключатель <code>GtkToggleButton</code> включена.</p>
 
-<h3 id="gtkcheckbutton">GtkCheckButton</h3>
+<h2 id="gtkcheckbutton">GtkCheckButton</h2>
 
 <p>Кнопка-флажок &mdash; это замаскированная кнопка-выключатель <code>GtkToggleButton</code>. Вместо скучного прямоугольного отображения <code>GtkToggleButton</code> кнопка <code>GtkCheckButton</code> выводится как привлекательный флажок с расположенным рядом текстом. Функциональных различий между ними нет.</p>
 
@@ -62,7 +63,7 @@ void       gtk_toggle_button_set_active     (GtkToggleButton *toggle_button, gbo
 GtkWidget *gtk_check_button_new_with_label (const gchar *label);
 </code></pre>
 
-<h3 id="gtkradiobutton">GtkRadioButton</h3>
+<h2 id="gtkradiobutton">GtkRadioButton</h2>
 
 <p>Это кнопка немного отличается от предыдущих, т. к. может группироваться с другими кнопками того же типа. Переключатель (или радиокнопка) <code>GtkRadioButton</code> &mdash; одна из тех кнопок, которые позволяют выбирать только один вариант из группы предложенных. Имя заимствовано у старых радиоприёмников с механическими кнопками, которые выскакивали с треском, возвращаясь в прежнее состояние, при нажатии другой кнопки.</p>
 
@@ -75,13 +76,13 @@ GSList    *gtk_radio_button_get_group       (GtkRadioButton *radio_button);
 
 <p>Группа переключателей представлена в объекте-списке библиотеки GLib, названном <code>GSList</code>. Для того чтобы объединить переключатели в группу, вы можете создать объект <code>GSList</code> и затем передать ему каждую кнопку с помощью функций <code>gtk_radio_button_new</code> и <code>gtk_radio_button_get_group</code>. Есть и более легкий способ в виде функции <code>gtk_radio_button_new_from_widget()</code>, которая включает в GSList существующую кнопку. Вы увидете ее в действии в следующем примере, которое позволит вам опробовать разные кнопки <code>GtkButton</code>.</p>
 
-<h3 id="example-use-gtk-buttons">Пример: использование кнопок GtkButton</h3>
+<h2 id="example-use-gtk-buttons">Пример: использование кнопок GtkButton</h2>
 
 <p>Введите следующий текст в файл с именем <code>gtk_buttons.c</code>.</p>
 
 <ol>
-<li>
-<p>Сначала объявите указатели на кнопки как глобальные переменные:</p>
+<li><p>Сначала объявите указатели на кнопки как глобальные переменные:</p>
+
 <pre><code class="C">#include &lt;gtk/gtk.h&gt;
 #include &lt;stdio.h&gt;
 
@@ -93,10 +94,9 @@ void closeApp(GtkWidget *window, gpointer data)
 {
     gtk_main_quit();
 }
-</code></pre>
-</li>
-<li>
-<p>Далее определите вспомогательную функцию, которая упаковывает <code>GtkWidget</code> и <code>GtkLabel</code> в контейнер <code>GtkBox</code> с горизонтальной ориентацией и затем вставляет этот <code>GtkBox</code> в заданный виджет-контейнер. Это поможет вам сократить повторяющийся программный код:</p>
+</code></pre></li>
+<li><p>Далее определите вспомогательную функцию, которая упаковывает <code>GtkWidget</code> и <code>GtkLabel</code> в контейнер <code>GtkBox</code> с горизонтальной ориентацией и затем вставляет этот <code>GtkBox</code> в заданный виджет-контейнер. Это поможет вам сократить повторяющийся программный код:</p>
+
 <pre><code class="C">void add_widget_with_label(GtkContainer *box, gchar *caption, GtkWidget *widget)
 {
     GtkWidget *label = gtk_label_new(caption);
@@ -109,10 +109,9 @@ void closeApp(GtkWidget *window, gpointer data)
 
     gtk_container_add(box, hbox);
 }
-</code></pre>
-</li>
-<li>
-<p><code>print_active</code> &mdash; ещё одна вспомогательная функция, которая выводит текущее состояние заданной кнопки-выключателя <code>GtkToggleButton</code> со строкой описания. Он вызывается из функции <code>button_clicked</code>, функции обратного вызова, связанной с сигналом <code>clicked</code> кнопки "OK". При каждом щелчке мышью этой кнопки вы получаете на экране отчет о состоянии кнопок:</p>
+</code></pre></li>
+<li><p><code>print_active</code> — ещё одна вспомогательная функция, которая выводит текущее состояние заданной кнопки-выключателя <code>GtkToggleButton</code> со строкой описания. Он вызывается из функции <code>button_clicked</code>, функции обратного вызова, связанной с сигналом <code>clicked</code> кнопки &#8220;OK&#8221;. При каждом щелчке мышью этой кнопки вы получаете на экране отчет о состоянии кнопок:</p>
+
 <pre><code class="C">void print_active(char *button_name, GtkToggleButton *button)
 {
     gboolean active = gtk_toggle_button_get_active(button);
@@ -128,10 +127,9 @@ void button_clicked(GtkWidget *button, gpointer data)
     print_active(&quot;Radio button 2&quot;, GTK_TOGGLE_BUTTON(radiobutton2));
     printf(&quot;\n&quot;);
 }
-</code></pre>
-</li>
-<li>
-<p>В функции <code>main</code> вы создаете виджеты кнопок, поочередно помещаете их в вертикальный контейнер GtkBox, добавив пояснительные метки, и связываете сигнал обратного вызова с кнопкой "OK":</p>
+</code></pre></li>
+<li><p>В функции <code>main</code> вы создаете виджеты кнопок, поочередно помещаете их в вертикальный контейнер GtkBox, добавив пояснительные метки, и связываете сигнал обратного вызова с кнопкой &#8220;OK&#8221;:</p>
+
 <pre><code class="C">int main(int argc, char *argv[])
 {
     GtkWidget *window;
@@ -171,8 +169,7 @@ void button_clicked(GtkWidget *button, gpointer data)
 
     return 0;
 }
-</code></pre>
-</li>
+</code></pre></li>
 </ol>
 
 <p>На рис. 3. показана программа <code>gtk_buttons.c</code> в действии с виджетами <code>GtkButton</code> четырех часто применяемых типов.</p>
@@ -190,14 +187,13 @@ void button_clicked(GtkWidget *button, gpointer data)
 
 <p>Назад: <a href="08-widgets-gtkspinbutton.html">Виджет GtkSpinButton</a></p>
 
+<p>Вернуться <a href="../../index.html">на главную страницу</a></p>
+
 <p>Далее: <a href="10-widgets-gtktreeview.html">Виджет GtkTreeView</a></p>
 
-<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
 
 
-
+      </article>
     </div>
-    <script src="../../js/jquery.js"></script>
-    <script src="../../js/bootstrap.js"></script>
   </body>
 </html>

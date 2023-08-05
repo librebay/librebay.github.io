@@ -7,6 +7,8 @@
 
     <title>Фреймворк GStreamer. Руководство разработчика приложений. Точки соединения и возможности</title>
 
+    <link href="../favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" />
+
     <link href="../css/bootstrap.css" rel="stylesheet">
     <link href="../css/librebay.css" rel="stylesheet">
 
@@ -18,16 +20,17 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
 <h1 id="h1-pads-and-capabilities">Фреймворк GStreamer. Руководство разработчика приложений. Точки соединения и возможности</h1>
 
-<p>Оригинал: GStreamer Application Development Manual<br/>
-Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br/>
-Дата публикации: 21 мая 2014 г.<br/>
-Перевод: А.Панин<br/>
-Дата перевода: 19 июня 2014 г.<br/>
+<p>Оригинал: GStreamer Application Development Manual<br />
+Авторы: Wim Taymans, Steve Baker, Andy Wingo, Ronald S. Bultje, Stefan Kost<br />
+Дата публикации: 21 мая 2014 г.<br />
+Перевод: А.Панин<br />
+Дата перевода: 19 июня 2014 г.<br />
 Оригинал перевода: <a href="http://rus-linux.net/MyLDP/BOOKS/gstreamer/08-pads.html">Фреймворк GStreamer. Руководство разработчика приложений. Точки соединения и возможности</a></p>
 
 <h2 id="pads-and-capabilities">Глава 8. Точки соединения и возможности</h2>
@@ -36,7 +39,7 @@
 
 <h3 id="pads">8.1. Точки соединения</h3>
 
-<p>Тип точки соединения описывается с помощью двух свойств: ее направления и доступности. Как мы упоминали ранее, фреймворк GStreamer устанавливает два направления точек соединения: выходные точки соединения и входные точки соединения. Эта терминология была введена при рассмотрении ситуации на уровне элемента: элементы принимают данные с помощью своих входных точек соединения и генерируют данные для передачи с помощью своих выходных точек соединения. Схематично входные точки соединения изображаются в левой части элемента, а выходные точки соединения - в правой части элемента. На подобных схемах данные передаются слева направо<a href="#fn:1" id="fnref:1" title="see footnote" class="footnote">[1]</a>.</p>
+<p>Тип точки соединения описывается с помощью двух свойств: ее направления и доступности. Как мы упоминали ранее, фреймворк GStreamer устанавливает два направления точек соединения: выходные точки соединения и входные точки соединения. Эта терминология была введена при рассмотрении ситуации на уровне элемента: элементы принимают данные с помощью своих входных точек соединения и генерируют данные для передачи с помощью своих выходных точек соединения. Схематично входные точки соединения изображаются в левой части элемента, а выходные точки соединения - в правой части элемента. На подобных схемах данные передаются слева направо<a href="#fn:1" id="fnref:1" title="see footnote" class="footnote"><sup>1</sup></a>.</p>
 
 <p>Понятие направления точек соединения является достаточно простым по сравнению с понятием их доступности. Точка соединения может быть в любом из следующих трех состояний доступности: всегда доступна, не постоянно доступна, доступна по запросу. Названия этих трех состояний говорят сами за себя: всегда доступные точки соединения доступны при любых обстоятельствах, не постоянно доступные точки соединения доступны лишь в определенных случаях (и могут становиться недоступными в произвольные моменты времени), а доступные по запросу точки соединения появляются только в случае явной отправки запросов со стороны приложений.</p>
 
@@ -50,8 +53,8 @@
 
 static void
 cb_new_pad (GstElement *element,
-        GstPad     *pad,
-        gpointer    data)
+	    GstPad     *pad,
+	    gpointer    data)
 {
   gchar *name;
 
@@ -130,7 +133,7 @@ some_function (GstElement *tee)
 
 <pre><code>static void
 link_to_multiplexer (GstPad     *tolink_pad,
-             GstElement *mux)
+		     GstElement *mux)
 {
   GstPad *pad;
   gchar *srcname, *sinkname;
@@ -185,7 +188,7 @@ link_to_multiplexer (GstPad     *tolink_pad,
 <li>Целочисленные значения (<code>G_TYPE_INT</code>): свойство имеет заданное определенное значение.</li>
 <li>Логические значения (<code>G_TYPE_BOOLEAN</code>): свойство имеет либо истинное значение TRUE, либо ложное значение FALSE.</li>
 <li>Значения с плавающей точкой (<code>G_TYPE_FLOAT</code>): свойство имеет заданное определенное значение с плавающей точкой.</li>
-<li>Строковые значения (<code>G_TYPE_STRING</code>): свойство содержит строку в кодировке UTF&#8211;8.</li>
+<li>Строковые значения (<code>G_TYPE_STRING</code>): свойство содержит строку в кодировке UTF-8.</li>
 <li>Дробное значение (<code>GST_TYPE_FRACTION</code>): содержит дробь, записанную в форме целочисленных числителя и знаменателя.</li>
 </ul></li>
 <li><p>Типы диапазонов являются типами <code>GType</code>, зарегистрированными фреймворком GStreamer для указания диапазона возможных значений. Они используются для указания допустимых значений частот дискретизации при работе с аудиопотоком или поддерживаемых размеров изображения при работе с видеопотоком. Тремя типами, объявленными в рамках фреймворка GStreamer, являются:</p>
@@ -240,7 +243,7 @@ read_video_props (GstCaps *caps)
   }
 
   g_print (&quot;Размеры видео из данного набора возможностей: %dx%d\n&quot;,
-       width, height);
+	   width, height);
 }
 </code></pre>
 
@@ -255,11 +258,11 @@ link_elements_with_filter (GstElement *element1, GstElement *element2)
   GstCaps *caps;
 
   caps = gst_caps_new_simple (&quot;video/x-raw&quot;,
-          &quot;format&quot;, G_TYPE_STRING, &quot;I420&quot;,
-          &quot;width&quot;, G_TYPE_INT, 384,
-          &quot;height&quot;, G_TYPE_INT, 288,
-          &quot;framerate&quot;, GST_TYPE_FRACTION, 25, 1,
-          NULL);
+  	      &quot;format&quot;, G_TYPE_STRING, &quot;I420&quot;,
+	      &quot;width&quot;, G_TYPE_INT, 384,
+	      &quot;height&quot;, G_TYPE_INT, 288,
+	      &quot;framerate&quot;, GST_TYPE_FRACTION, 25, 1,
+	      NULL);
 
   link_ok = gst_element_link_filtered (element1, element2, caps);
   gst_caps_unref (caps);
@@ -284,15 +287,15 @@ link_elements_with_filter (GstElement *element1, GstElement *element2)
 
   caps = gst_caps_new_full (
       gst_structure_new (&quot;video/x-raw&quot;,
-             &quot;width&quot;, G_TYPE_INT, 384,
-             &quot;height&quot;, G_TYPE_INT, 288,
-             &quot;framerate&quot;, GST_TYPE_FRACTION, 25, 1,
-             NULL),
+			 &quot;width&quot;, G_TYPE_INT, 384,
+			 &quot;height&quot;, G_TYPE_INT, 288,
+			 &quot;framerate&quot;, GST_TYPE_FRACTION, 25, 1,
+			 NULL),
       gst_structure_new (&quot;video/x-bayer&quot;,
-             &quot;width&quot;, G_TYPE_INT, 384,
-             &quot;height&quot;, G_TYPE_INT, 288,
-             &quot;framerate&quot;, GST_TYPE_FRACTION, 25, 1,
-             NULL),
+			 &quot;width&quot;, G_TYPE_INT, 384,
+			 &quot;height&quot;, G_TYPE_INT, 288,
+			 &quot;framerate&quot;, GST_TYPE_FRACTION, 25, 1,
+			 NULL),
       NULL);
 
   link_ok = gst_element_link_filtered (element1, element2, caps);
@@ -370,7 +373,7 @@ main (int   argc,
 <ol>
 
 <li id="fn:1">
-<p>В реальности не существует препятствия для передачи данных от выходной точки соединения к входной точке соединения одного и того же элемента в противоположном конвейеру направлении (влево по отношению к текущему элементу на рисунке). Данные, однако, всегда передаются от выходной точки соединения одного элемента к входной точке соединения другого. <a href="#fnref:1" title="return to article" class="reversefootnote">&#160;&#8617;</a></p>
+<p>В реальности не существует препятствия для передачи данных от выходной точки соединения к входной точке соединения одного и того же элемента в противоположном конвейеру направлении (влево по отношению к текущему элементу на рисунке). Данные, однако, всегда передаются от выходной точки соединения одного элемента к входной точке соединения другого. <a href="#fnref:1" title="return to body" class="reversefootnote">&#160;&#8617;&#xfe0e;</a></p>
 </li>
 
 </ol>
@@ -378,9 +381,7 @@ main (int   argc,
 
 
 
-
+      </article>
     </div>
-    <script src="../js/jquery.js"></script>
-    <script src="../js/bootstrap.js"></script>
   </body>
 </html>

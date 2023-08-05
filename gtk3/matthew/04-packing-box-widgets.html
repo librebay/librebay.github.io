@@ -20,6 +20,7 @@
   <body>
 
     <div class="container" role="main">
+      <article class="content">
 
 
 
@@ -33,7 +34,7 @@
 
 <p>Виджет-контейнер <code>GtkBox</code> создаётся функцией:</p>
 
-<pre><code>GtkWidget *gtk_box_new (GtkOrientation orientation, gint spacing);
+<pre><code class="C">GtkWidget *gtk_box_new (GtkOrientation orientation, gint spacing);
 </code></pre>
 
 <p>При вызове функции <code>gtk_box_new</code> задают два параметра: <code>orientation</code> и <code>spacing</code>. Эти параметры управляют компоновкой всех виджетов в конкретном упаковочном контейнере.</p>
@@ -49,7 +50,7 @@
 
 <p>После того как упаковочный контейнер создан, добавьте в него виджеты с помощью функций <code>gtk_box_pack_start</code> и <code>gtk_box_pack_end</code>:</p>
 
-<pre><code>void gtk_box_pack_start (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+<pre><code class="C">void gtk_box_pack_start (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 void gtk_box_pack_end (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 </code></pre>
 
@@ -95,7 +96,7 @@ void gtk_box_pack_end (GtkBox *box, GtkWidget *child, gboolean expand, gboolean 
 
 <p>Давайте теперь рассмотрим эти виджеты упаковочных контейнеров и создадим более сложный пользовательский интерфейс, демонстрирующий вложенные упаковочные контейнеры.</p>
 
-<h3 id="example-widget-container-layout">Пример: Макет виджета-контейнера</h3>
+<h2 id="example-widget-container-layout">Пример: Макет виджета-контейнера</h2>
 
 <p>В этом примере вы спланируете размещение нескольких простых виджетов-меток типа <code>GtkLabel</code> с помощью контейнеров <code>GtkBox</code>. Виджеты-метки &mdash; простые графические элементы, подходящие для вывода коротких текстовых фрагментов. Назовите эту программу <code>gtk_container.c</code>:</p>
 
@@ -164,7 +165,7 @@ int main(int argc, char *argv[])
 <figcaption>Рис.1. Размещение меток в контейнерах</figcaption>
 </figure>
 
-<h4 id="how-it-works">Как это работает</h4>
+<h3 id="how-it-works">Как это работает</h3>
 
 <p>Вы создаёте два виджета упаковочных контейнеров: <code>hbox</code> и <code>vbox</code>, горизонтальный и вертикальный, соответственно. С помощью функции <code>gtk_box_pack_start</code> вы заполняете <code>vbox</code> виджетами <code>label1</code> и <code>label2</code>, причем <code>label2</code> располагается у нижнего края контейнера, потому что вставляется после <code>label1</code>. Далее контейнер <code>vbox</code> целиком наряду с меткой <code>label3</code> вставляется в контейнер <code>hbox</code>.</p>
 
@@ -183,14 +184,13 @@ int main(int argc, char *argv[])
 
 <p>Назад: <a href="03-events-signals-and-callbacks.html">События, сигналы и обратные вызовы</a></p>
 
+<p>Вернуться <a href="../../index.html">на главную страницу</a></p>
+
 <p>Далее: <a href="05-widgets-gtk.html">Виджеты GTK+</a></p>
 
-<p>Вернуться <a href="../../index.html">на главную страницу</a>.</p>
 
 
-
+      </article>
     </div>
-    <script src="../../js/jquery.js"></script>
-    <script src="../../js/bootstrap.js"></script>
   </body>
 </html>

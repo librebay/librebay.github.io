@@ -27,7 +27,7 @@ void       gtk_spin_button_set_value        (GtkSpinButton *spin_button, gdouble
 
 Для создания объекта типа `GtkAdjustment` передайте в функцию нижнюю и верхнюю границы и размер приращения.
 
-```
+```C
 GtkAdjustment *
 gtk_adjustment_new (gdouble value,          // Начальное значение
                     gdouble lower,          // Минимальное значение
@@ -45,7 +45,7 @@ gtk_adjustment_new (gdouble value,          // Начальное значени
 
 Прочесть текущее значение очень легко благодаря функции `gtk_spin_button_get_value()`, а если вам нужно целое число, можно применить функцию `gtk_spin_button_get_value_as_int()`.
 
-### Пример: использование виджета GtkSpinButton [example-use-gtkspinbutton]
+## Пример: использование виджета GtkSpinButton [example-use-gtkspinbutton]
 
 Сейчас мы посмотрим в коротком примере, как действует кнопка-счётчик `GtkSpinButton`. Назовите файл `gtk_spin.c`.
 
@@ -95,6 +95,6 @@ int main(int argc, char *argv[])
 
 Назад: [Виджет GtkEntry](07-widgets-gtkentry.html)
 
-Далее: [Виджеты класса GtkButton](09-widgets-gtkbutton.html)
+Вернуться  [на главную страницу](../../index.html)
 
-Вернуться  [на главную страницу](../../index.html).
+Далее: [Виджеты класса GtkButton](09-widgets-gtkbutton.html)

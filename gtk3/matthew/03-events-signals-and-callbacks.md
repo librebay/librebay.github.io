@@ -38,7 +38,7 @@ gulong g_signal_connect(gpointer *object, const gchar* name, GCallback func, gpo
 >
 > До появления GTK+ 2 для связывания функций обратного вызова применялась функция-макрос `gtk_signal_connect`. Начиная с GTK+ 2, она была заменена на функцию-макрос `g_signal_connect`.
 
-### Пример: Функция обратного вызова [example-a-callback-function]
+## Пример: Функция обратного вызова [example-a-callback-function]
 
 Рассмотрим пример, где опробуем работу функции-макроса `g_signal_connect`.
 
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 ![Рис. 1. Рассмотрение работы функции обратного вызова на примере кнопки](images/gtk_callback.png)
 
 
-#### Как это работает [how-it-works]
+### Как это работает [how-it-works]
 
 Вы добавили два новых элемента в программу `gtk_callback.c`: виджет `GtkButton` и функцию обратного вызова. `GtkButton` &mdash; это виджет простой кнопки, которая может содержать текст, в нашем случае "Hello World", и порождает сигнал, названный `clicked`, каждый раз, когда кнопку щелкают мышью.
 
@@ -101,6 +101,7 @@ g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(button_clicked), "Butto
 ```C
 void gtk_container_add (GtkContainer *container, GtkWidget *widget);
 ```
+
 Как вы уже знаете, `GtkWindow` &mdash; потомок или дочерний объект объекта `GtkContainer`, поэтом вы можете привести тип вашего объекта-окна к типу `GtkContainer` с помощью макроса `GTK_CONTAINER`:
 
 ```C
@@ -110,11 +111,10 @@ gtk_container_add(GTK_CONTAINER(window), button);
 Функция `gtk_container_add` прекрасно подходит для расположения в окне одиночного виджета, но гораздо чаще вам потребуется для создания хорошего интерфейса размещать несколько виджетов в разных частях окна. У комплекта GTK+ есть специальные виджеты как раз для этой цели, именуемые виджетами упаковочных контейнеров.
 
 
-
 ----------
 
 Назад: [Введение в GTK+](02-introducing-gtk.html)
 
-Далее: [Виджеты упаковочных контейнеров](04-packing-box-widgets.html)
+Вернуться  [на главную страницу](../../index.html)
 
-Вернуться  [на главную страницу](../../index.html).
+Далее: [Виджеты упаковочных контейнеров](04-packing-box-widgets.html)
