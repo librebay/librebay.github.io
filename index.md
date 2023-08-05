@@ -34,9 +34,3 @@
 - [Виджет GtkTreeView](gtk3/matthew/10-widgets-gtktreeview.html)
     - [Пример: использование виджета GtkTreeView](gtk3/matthew/10-widgets-gtktreeview.html#example-use-gtktreeview)
 
-
-
-
-
-
-
