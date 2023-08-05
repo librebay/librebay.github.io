@@ -34,33 +34,44 @@
 
 #include <glib.h>
 
-#define MAX_PATH_LEN 1024
+enum {
+    MAX_PATH_LEN = 1024
+};
+
+int force = 0;
 
 char *get_git_path(const char *path);
 
-void parse_dir(const char *path, const int order);
+void parse_dir(const char *path, unsigned long order);
 
 gboolean if_file_name_md(const char *fname);
 
-void process_file_md(const char *fname_md, const time_t mtime, const int order);
+void process_file_md(const char *fname_md, time_t mtime, unsigned long order);
 
 char *get_file_name_html(const char *fname_md);
 
-void generate_html_file(const char *fname_md, const char *fname_html, const int order);
+void generate_html_file(const char *fname_md, const char *fname_html, unsigned long order);
 
-char *read_line_from_file(char *buf, FILE *stream);
+char *read_line_from_file(FILE *stream);
 
 char *get_title(const char *fname_md);
 
 int main(int argc, char **argv)
 {
     setlocale(LC_ALL, "ru_RU.utf8");
+    force = 0;
+    int i = 0;
+    for (i = 0; i <argc; ++i) {
+        if (!strcmp(argv[i], "force")) {
+            force = 1;
+        }
+    }
 
     // Буфер в который будет помещен путь
     // к текущей директории
     char path_current[MAX_PATH_LEN];
     // Переменная, в которую буднт помещен указатель на PathName
-    char *pn;
+    char *pn = NULL;
 
     // Определяем путь к текущей директории
     pn = getcwd(path_current, MAX_PATH_LEN);
@@ -73,22 +84,24 @@ int main(int argc, char **argv)
     char *out = get_git_path(path_current);
     parse_dir(out, 0);
 
+    free(out);
+
     return 0;
 }
 
 char *get_git_path(const char *path)
 {
-    char *dirc, *dirc_orig, *dname;
-    char *basec, *basec_orig, *bname;
+    char *dirc_orig = strdup(path);
+    char *basec_orig = strdup(path);
+
+    char *dirc = dirc_orig;
+    char *dname = dirname(dirc);
+
+    char *basec = basec_orig;
+    char *bname = basename(basec);
+
     char *path_out = NULL;
-
-    dirc_orig = dirc = strdup(path);
-    basec_orig = basec = strdup(path);
-
-    dname = dirname(dirc);
-    bname = basename(basec);
-
-    if (strcmp(bname, "md2html")) {
+    if (strcmp(bname, "md2html") != 0) {
         path_out = strdup(path);
     }
     else {
@@ -101,13 +114,12 @@ char *get_git_path(const char *path)
     return path_out;
 }
 
-void parse_dir(const char *path, const int order)
+void parse_dir(const char *path, const unsigned long order)
 {
-
     //g_print("\nКаталог = %s, order = %d\n\n", path, order);
 
-    DIR *dir;
-    struct dirent *entry;
+    DIR *dir = NULL;
+    struct dirent *entry = NULL;
     struct stat st;
 
     dir = opendir(path);
@@ -147,6 +159,7 @@ void parse_dir(const char *path, const int order)
         }
         else if (S_ISREG(st.st_mode)) {
             if (if_file_name_md(entry->d_name)) {
+                //g_print("\nProcess file = %s\n", ffname);
                 process_file_md(ffname, st.st_mtime, order);
             }
         }
@@ -156,13 +169,11 @@ void parse_dir(const char *path, const int order)
     }
 
     closedir(dir);
-
-    return;
 }
 
 gboolean if_file_name_md(const char *fname)
 {
-    int len = strlen(fname);
+    unsigned long len = strlen(fname);
     if (fname[len - 3] == '.' && fname[len - 2] == 'm' && fname[len - 1] == 'd') {
         return TRUE;
     }
@@ -171,8 +182,8 @@ gboolean if_file_name_md(const char *fname)
 
 char *get_file_name_html(const char *fname_md)
 {
-    int len = strlen(fname_md) - 2;
-    int len_new = len + 5;
+    unsigned long len = strlen(fname_md) - 2;
+    unsigned long len_new = len + 5;
     char *fname_html = calloc(len_new, sizeof(char));
     fname_html = strncpy(fname_html, fname_md, len);
     fname_html = strncat(fname_html, "html", 4);
@@ -180,7 +191,7 @@ char *get_file_name_html(const char *fname_md)
     return fname_html;
 }
 
-void process_file_md(const char *fname_md, const time_t mtime, const int order)
+void process_file_md(const char *fname_md, const time_t mtime, const unsigned long order)
 {
     //g_print("md Файл = %s\n", fname_md);
     //g_print("Дата и время изменения файла = %ld\n", mtime);
@@ -197,10 +208,8 @@ void process_file_md(const char *fname_md, const time_t mtime, const int order)
             fprintf(stderr, "lstat() error for %s\n", fname_html);
             i_create_html = FALSE;
         }
-        else {
-            if (st.st_mtime < mtime) {
-                i_create_html = TRUE;
-            }
+        else if (force == 1 || st.st_mtime < mtime) {
+            i_create_html = TRUE;
         }
     }
     else if (g_file_test(fname_html, G_FILE_TEST_IS_DIR)) {
@@ -208,23 +217,21 @@ void process_file_md(const char *fname_md, const time_t mtime, const int order)
         i_create_html = FALSE;
     }
     else {
-        i_create_html = TRUE;
+        fprintf(stderr, "Error: %s has unknow type!\n", fname_html);
+        i_create_html = FALSE;
     }
 
     if (i_create_html) {
-        printf("Создаётся файл: %s\n", fname_html);
+        g_print("Создаётся файл: %s\n", fname_html);
         generate_html_file(fname_md, fname_html, order);
     }
 
     free(fname_html);
-
-    return;
 }
 
-void generate_html_file(const char *fname_md, const char *fname_html, const int order)
+void generate_html_file(const char *fname_md, const char *fname_html, const unsigned long order)
 {
-
-    FILE *file_html;
+    FILE *file_html = NULL;
 
     file_html = fopen(fname_html, "w");
 
@@ -239,9 +246,9 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
         return;
     }
 
-    int len = order * 3 + 1;
+    unsigned long len = order * 3 + 1;
     char *lpath = calloc(len, sizeof(char));
-    for (int i = 0; i < order; i++) {
+    for (unsigned long i = 0; i < order; i++) {
         lpath = strncat(lpath, "../", 3);
     }
     lpath[len - 1] = '\0';
@@ -253,7 +260,9 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
     fprintf(file_html, "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n");
     fprintf(file_html, "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\n");
 
-    fprintf(file_html, "    <title>%s</title>\n\n", title);
+    if (title != NULL) {
+        fprintf(file_html, "    <title>%s</title>\n\n", title);
+    }
 
     fprintf(file_html, "    <link href=\"%sfavicon.ico\" rel=\"shortcut icon\" type=\"image/vnd.microsoft.icon\" />\n\n",  lpath);
 
@@ -267,11 +276,12 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
     fprintf(file_html, "  </head>\n");
     fprintf(file_html, "  <body>\n\n");
 
-    fprintf(file_html, "    <div class=\"container\" role=\"main\">\n\n\n\n");
+    fprintf(file_html, "    <div class=\"container\" role=\"main\">\n");
+    fprintf(file_html, "      <article class=\"content\">\n\n\n\n");
 
     fclose(file_html);
 
-    gchar *command = g_strconcat("multimarkdown ", fname_md, " >> ", fname_html, "\n", NULL);
+    gchar *command = g_strconcat("multimarkdown --to=html ", fname_md, " >> ", fname_html, "\n", NULL);
     system(command);
     g_free(command);
 
@@ -282,9 +292,8 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
         return;
     }
 
-    fprintf(file_html, "\n\n\n    </div>\n");
-    fprintf(file_html, "    <script src=\"%sjs/jquery.js\"></script>\n", lpath);
-    fprintf(file_html, "    <script src=\"%sjs/bootstrap.js\"></script>\n", lpath);
+    fprintf(file_html, "\n\n\n      </article>\n");
+    fprintf(file_html, "    </div>\n");
     fprintf(file_html, "  </body>\n");
     fprintf(file_html, "</html>\n");
     fclose(file_html);
@@ -292,11 +301,13 @@ void generate_html_file(const char *fname_md, const char *fname_html, const int 
     free(lpath);
 }
 
-char *read_line_from_file(char *buf, FILE *stream)
+char *read_line_from_file(FILE *stream)
 {
 
-    unsigned int N = 256, delta = 256, i = 0;
-    buf = (char *)malloc(sizeof(char) * N);
+    unsigned int N = 256;
+    unsigned int delta = 256;
+    unsigned int i = 0;
+    char *buf = (char *)malloc(sizeof(char) * N);
     buf[i] = getc(stream);
     while (buf[i] != EOF && buf[i] != '\n') {
         ++i;
@@ -312,7 +323,7 @@ char *read_line_from_file(char *buf, FILE *stream)
 
 char *get_title(const char *fname_md)
 {
-    FILE *file;
+    FILE *file = NULL;
     file = fopen(fname_md, "r");
 
     if (file == NULL) {
@@ -320,25 +331,28 @@ char *get_title(const char *fname_md)
         return NULL;
     }
 
-    char *line;
-    char *line_orig;
-    char *title;
+    char *line = NULL;
+    char *line_orig = NULL;
+    char *title = NULL;
 
     while (!feof(file)) {
-        line_orig = line = read_line_from_file(line, file);
+        if (line_orig != NULL) {
+            free(line_orig);
+            line_orig = NULL;
+        }
 
-        if (strlen(line) < 3)
-            continue;
+        line_orig = read_line_from_file(file);
+        line = line_orig;
 
-        if (line[0] == '#' && (line[1] == ' ' || line[1] == '\t')) {
+        if (strlen(line) >= 3 && (line[0] == '#' && (line[1] == ' ' || line[1] == '\t'))) {
             line[0] = ' ';
             line = g_strchomp(line);
-            int len = strlen(line);
+            unsigned long len = strlen(line);
             if (line[len - 1] == '#') {
                 line[len - 1] = ' ';
             }
 
-            int i;
+            unsigned long i = 0;
             int i_cut = 0;
             for (i = 0; i < len; i++) {
                 if (line[i] == '[') {
@@ -356,23 +370,21 @@ char *get_title(const char *fname_md)
             line = g_strchug(line);
             line = g_strchomp(line);
 
-            if (strlen(line) == 0) {
-                title = strdup("Title");
-            }
-            else {
+            if (strlen(line) > 0) {
                 title = strdup(line);
             }
-
-            free(line_orig);
-            line_orig = NULL;
-
-            return title;
+            break;
         }
+    }
 
+    if (line_orig != NULL) {
         free(line_orig);
         line_orig = NULL;
     }
 
-    title = strdup("Title");
+    if (title == NULL) {
+        title = strdup("Title");
+    }
+
     return title;
 }
